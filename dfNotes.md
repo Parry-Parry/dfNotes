@@ -1,10 +1,5 @@
-$$\newcommand{\vec}[1]{{\bf #1} } 
-\newenvironment{examinable}{}{{\ \LARGE[\spadesuit]}}
-\newcommand{\real}{\mathbb{R}}
-\newcommand{\expect}[1]{\mathbb{E}[#1]}
-\DeclareMathOperator*{\argmin}{arg\,min}
-$$
-<form action="javascript:code_toggle()"><input type="submit" id="toggleButton" value="Show Code"></form>""")
+
+<form action="javascript:code_toggle()"><input type="submit" id="toggleButton" value="Show Code"></form>
 
 # Database Fundamentals 2020
 ## Week 1
@@ -1873,4 +1868,1323 @@ $$x_1 = y_1\\
 $$
 
 which, for a given $y_1, y_2, y_3, y_4$ is trivial to solve by substitution.
+
+## Week 5
+
+### Graphs as matrices
+
+We might model the connectivity of distribution centres as a graph. A directed graph connects vertices by edges. The definition of a graph is  
+G = \(V, E\), where V is a set of vertices and E is a set of edges connecting pairs of vertices.
+
+### Computing graph properties
+
+There are some graph properties which we can compute easily from this binary matrix:  
+* The *out-degree* of each vertex \(number of edges leaving a vertex\) is the sum of each row.
+* The *in-degree* of each vertex \(number of edges entering a vertex\) is the sum of each column.
+* If the matrix is symmetric it represents an undirected graph; this is the case if it is equal to its transpose.
+* A directed graph can be converted to an undirected graph by computing $A^\prime = A + A^T$. This is equivalent to making all the arrows bi\-directional.
+* If there are non\-zero elements on the diagonal, that means there are edges connecting vertices to themselves \(self\-transitions\).
+
+### Edge\-weighted graphs
+
+If the some of the connections between distibution centres are stronger than others, e.g. if they are connected by bigger roads, we can model this using edge weights. Now the entry at A<sub>ij</sub> represents the weight of the connection from vertex V<sub>i</sub> to V<sub>j</sub>.
+
+We can think of graphs as representing flows of "mass" through a network of vertices.
+
+* If the total flow out of a vertex is \>1, i.e. its row sums to \>1, then it is a **source** of mass; for example it is *manufacturing* things.
+* If the total flow out of a vertex is <1, i.e. its row sums to <1, then it is a **sink**; for example it is *consuming* things.
+* If the total flow out of the vertex is 1 exactly, i.e. its row sums to 1 exactly, then it conserves mass; it only ever *re\-routes* things.
+
+If the whole graph consists of vertices whose total outgoing weight is 1.0, and all weights are positive or zero, then the whole graph preserves mass under flow. Nothing is produced or consumed. Every row in the adjacency matrix $A$ sums to 1. This is called a **conserving adjacency matrix**. We can normalise the rows of any positive matrix A \(so long as each vertex has at least some flow out of it\) to form a conserving adjacency matrix.
+
+### Flow analysis: using matrices to model discrete problems
+
+Previously, we have talked about how matrices perform geometrical transformations on vectors. Matrices are sometimes referred to as linear maps because they map from one vector to another, using only linear operations. The adjacency matrix does this too.
+
+At any point in time, we can write down the proportion of packages at each depot as a vector →x<sub>t</sub> ∈ V, where V is the number of vertices in the graph \(number of depots\).
+
+The flow of packages \(per day\) between depots is a linear map V → V. This is represented by the adjacency matrix A ∈ V×V \(a square matrix\).
+
+The switch of viewpoints from discrete to continuous \(and vice versa\) is a very powerful and fundamental step in data analysis. It might not seem like it, but the flow of packages can be modelled as some rigid rotation and scaling in a high\-dimensional space.
+
+A great many problems can be represented this way:
+
+* packages moving between depots \(how many packages at each depot at an instant in time\)
+* users moving between web pages \(how many users on each webpage\)
+* cancer cells moving between tumour sites \(how many cancer cells at each tumour site\)
+* trade between states \(how many items in each state\)
+* shoppers walking between retailers \(how many shoppers in each shop\)
+* traffic across a load-balancing network \(how many cars at each junction\)
+* NPCs (non-player characters) moving between towns in a game \(how many NPCs in each town\)
+* fluid moving between regions \(how much fluid in each tank\)
+* blood flowing between organs \(how much blood in each organ\)
+* beliefs moving among hypotheses \(how much we believe in each hypothesis\)
+
+### Simulation of changes in package distribution over time
+
+Suppose we start with an initial distribution of packages: a vector x<sup>→</sup><sub>t</sub>=0. How many packages will be at each depot tomorrow? This will be given by the vector x<sup>→</sup><sub>t</sub>=1, which can be computed as follows:  
+x<sup>→</sup><sub>t=1</sub> = x<sup>→</sup><sub>t=0</sub>A  
+
+We can simulate the flow *over the whole network* in one go with just one matrix multiplication. This "rotates" the distribution of packages from today to tomorrow. The advantage of vectorised operations is that they can be accelerated using hardware such as a GPU \(Graphics Processing Unit\).
+
+### Some new matrix operations
+
+For square matrices A \(i.e. representing **linear transforms**\):  
+* Matrices can be exponentiated: C = A^n this "repeats" the effect of matrix 
+* Matrices can be inverted: C = A^\{-1\} this undoes the effect of a matrix 
+* We can find eigenvalues: A\{x\} = λ \{x\} this identifies specific vectors \{x\} that are *only* scaled by a factor λ \(not rotated\) when transformed by matrix A.
+* Matrices can be factorised: A = UΣV<sup>T</sup> any matrix can expressed as the product of three other matrices with special forms. 
+* We can measure some properties of A numerically, including the **determinant**, **trace** and **condition number**.
+
+### Eigenvalues and eigenvectors
+
+A matrix represents a special kind of function: a **linear transform**; an operation that performs rotation and scaling on vectors. However, there are certain vectors which don't get rotated when multiplied by the matrix. They only get scaled \(stretched or compressed\). These vectors are called **eigenvectors**, and they can be thought of as the "fundamental" or "characteristic" vectors of the matrix, as they have some stability. The prefix **eigen** just means **characteristic**. The scaling factors that the matrix applies to its eigenvectors are called **eigenvalues**.
+
+We can visualise the effect of a matrix transformation by imagining a parallelepiped \(whose edges are vectors\) being rotated, stretched and compressed. If the edges of the parallelelpiped are the eigenvectors of the matrix, the parallelepiped will only be stretched or compressed, not rotated. If the edges of this parallelepiped have unit length, then after the transformation their lengths will be equal to the eigenvalues. 
+
+#### How to find the leading eigenvector: the power iteration method
+
+What happens if we apply a square matrix A to a vector x of any length, then take the resulting vector and apply A again, and so on?
+
+Let's work with column vectors now, so that A pre\-multiplies the vector. If we compute
+
+x<sub>n</sub> = A<sup>n</sup>x<sub>0</sub>
+
+this will generally either explode in value or collapse to zero. However, we can fix the problem by normalizing the resulting vector after each application of the matrix.
+
+The vector will be forced back to unit norm at each step, using the L<sub>∞</sub> norm. This process is called power iteration.
+
+The vector that results from power iteration is known as the leading eigenvector. It satisfies the definition of an eigenvector because the matrix A performs only scaling on this vector \(no rotation\). We know this **must** be true, because the scaling effect is eliminated by the normalisation step in the power iteration, but any other effects pass through.
+
+### Formal definition of eigenvectors and eigenvalues
+
+Consider a vector function f\(x\). There may exist vectors such that f\(x\) = λx. The function maps these vectors to scaled versions of themselves. No rotation or skewing is applied, just pure scaling.
+
+Any square matrix A represents a function f\(x\) and may have vectors like this, such that
+
+Ax<sub>i</sub> = λ<sub>i</sub>x<sub>i</sub>
+
+Each vector xi satisfying this equation is known as an **eigenvector** and each corresponding factor λ<sub>i</sub> is known as an eigenvalue.
+
+For any matrix, the eigenvalues are uniquely determined, but the eigenvectors are not. There may be many eigenvectors corresponding to any given eigenvalue.
+
+Eigenproblems are problems that can be tackled using eigenvalues and eigenvectors.
+
+From the **eigendecomposition** we can get a feel for which eigenvectors are large and which are small.
+
+### The eigenspectrum
+
+The **eigenspectrum** is just the sequence of absolute eigenvalues, ordered by magnitude λ<sub>1</sub>\>λ<sub>2</sub>\>...\>λ<sub>n</sub>. This *ranks* the eigenvectors in order of "importance". As we shall see later, this can be useful in finding "simplified" versions of linear transforms.
+
+### Numerical instability of eigendecomposition algorithms
+
+A word of warning: `np.linalg.eig` can suffer from numerical instabilities due to rounding errors resulting from limitations on floating point precision. This means that sometimes the smallest eigenvectors are not completely orthogonal. `np.linalg.eig` is often sufficient for most purposes, but be careful how you use it. 
+
+If your matrix satisfies certain special conditions, you might be able to use a more stable algorithm. For example, if it is real and symmetric \(or Hermitian, in the case of a complex matrix\), you can use `np.linalg.eigh`. 
+
+### Principal Component Analysis \(PCA\)
+
+We saw the covariance matrix Σ in the previous Unit. It tells us how much correlation there is between the variables in a data set. We can plot a representation of the covariance matrix as an ellipse which aligns with the distribution of the data points. Uncorrelated data is represented by a circle, whereas strongly correlated data is represented by a long thin ellipse. The eigenvectors of the covariance matrix, scaled by their eigenvalues, form the principal axes of the ellipse.
+
+#### Decomposition of the covariance matrix into its eigenvectors and eigenvalues
+
+The eigenvectors of the covariance matrix are called the **principal components**, and they tell us the directions in which the data varies most. This is an incredibly useful thing to be able to do, particularly with high\-dimensional data sets where the variables may be correlated in complicated ways.
+
+The direction of principal component i is given by the eigenvector x<sub>i</sub>, and the length of the component is given by sqrt\(λ<sub>i</sub>\).
+
+
+### Reconstruction of the covariance matrix from its eigenvectors and eigenvalues
+
+Since we are able to decompose the covariance matrix into its constituent eigenvectors and eigenvalues, we must also be able to use these constituent parts to reconstruct the covariance matrix. We can do this as follows:
+
+Σ = Q λ Q<sup>T</sup>
+
+where Q is a matrix of unit eigenvectors x<sub>i</sub> (same as the output `np.linalg.eig`) and λ is a diagonal matrix of eigenvalues \(λ<sub>i</sub> on the diagonal, zero elsewhere\).
+
+### Approximating a matrix
+
+Imagine we started with a very high dimensional data set, so $\Sigma$ is a very large matrix. It's so large, we don't want to store it in memory. Instead, we just want to store the first few principal components and use these to reconstruct an *approximation* to Σ. Providing we keep the largest principal components, we will probably retain most of the information. 
+
+
+Matrix approximation can be used to simplify transformations or to compress matrices for data transmission.
+
+The eigenspectrum gives us an idea of how simply a matrix could be approximated:
+* One large eigenvalue and many small ones \- just one vector might approximate this matrix. 
+* All eigenvalues similar magnitude? We will not be able to approximate this transform easily.
+
+
+### Dimensionality reduction
+
+We can also reduce the dimensionality of our original dataset by projecting it onto the few principal components of the covariance matrix that we've kept. We can do this by multiplying the dataset matrix by each component and saving the projected data into a new, lower\-dimensional matrix.
+
+
+### Uses of eigendecomposition
+
+Matrix decomposition is an *essential* tool in data analysis. It can be extremely powerful and is efficient to implement. Systems such as recommenders \(e.g. Netflix, YouTube, Amazon, etc.\), search engines \(Google\), image compression algorithms, machine learning tools and visualisation systems apply these decompositions *extensively*.
+
+Google was wholly built around matrix decomposition algorithms; that's what "PageRank" is. This is what allowed Google to race ahead of their competitors in the early days of the search wars.
+
+The eigendecomposition can be used *anywhere* there is a system modelled as a linear transform \(any linear map N → N\). It lets us predict behaviour over different time scales \(e.g. very short term or very long term\). For instance, we can:
+
+* Find "modes" or "resonances" in a system \(e.g physical model of a bridge\). 
+    * For example, every room has a set of "eigenfrequencies" - the acoustic resonant modes. A linear model of the acoustics of the room could be written as a matrix, and the resonant frequencies extracted directly via the eigendecomposition. [
+* Predict the behaviour of feedback control systems: is the autopilot going to be stable or unstable?
+* Partition graphs and cluster data \(spectral clustering)\. 
+* Predict flows on graphs.
+* Perform Principal Component Analysis on high\-dimensional data sets for exploratory data analysis, 2D visualisation or data compression.
+
+As soon as we can write down a matrix A we can investigate its properties with the eigendecomposition.
+
+### Matrix properties from the eigendecomposition
+
+### Trace
+
+The trace of a square matrix can be computed from the sum of its diagonal values:
+
+Tr\(A\) = a<sub>1,1</sub> + a<sub>2,2</sub> \+ ... \+ a<sub>n,n</sub>
+
+It is also equal to the sum of the eigenvalues of A
+
+Tr\(A\) = sum\(λ<sub>i</sub>\) for i in range 1 to n
+
+The trace can be thought of as measuring the  **perimeter** of the parallelotope of a unit cube transformed by the matrix.
+
+### Determinant
+
+The determinant det\(A\) is an important property of square matrices. It can be thought of as the **volume** of the parallelotope  of a unit cube transformed by the matrix \-\- it measures how much the space expands or contracts after the linear transform.
+
+It is equal to the product of the eigenvalues of the matrix.
+
+det\(A\) = product\(λ<sub>i</sub>\) 
+
+If any eigenvalue λ<sub>i</sub> of A is 0, the determinant det\(A\)=0, and the transformation collapses at least one dimension to be completely flat. This means that the transformation **cannot be reversed**; information has been lost.
+
+### Definite and semi-definite matrices
+
+A matrix is called **positive definite** if all of its eigenvalues are greater than zero: λ<sub>i</sub> \> 0$. It is **positive semi\-definite** if all of its eigenvalues are greater than or equal to zero: λ<sub>i</sub> ≥ 0. It is **negative definite** if all of the eigenvalues are less than zero: λ<sub>i</sub> < 0, and **negative semi\-definite** if all the eigenvalues are less than or equal to zero: λ<sub>i</sub> ≤ 0.
+
+A positive definite matrix A has the property x<sup>T</sup>Ax\>0 for all \(nonzero\) x. This tells us that the dot product of x with Ax must be positive \(N.B. Ax is the vector obtained by transforming x with A\). This can only happen if the angle θ between x and Ax is less than π\/2, since x<sup>T</sup>Ax = \|x\|\|Ax\|cos\(θ\). That means that A does not rotate x through more than 90∘.
+
+Positive definiteness will be an important concept when we discuss **covariance matrices** \(important in statistical data analysis\) and **Hessian matrices**  \(important in numerical optimisation\).
+
+### Matrix Inversion
+
+We have seen four basic algebraic operations on matrices:
+
+* scalar multiplication cA
+* matrix addition A\+B
+* matrix multiplication BA
+* matrix transposition A<sup>T</sup>
+
+There is a further important operation: **inversion** A<sup>-1</sup>, defined such that:
+
+* A<sup>-1</sup>(Ax) = x
+* A<sup>-1</sup>A = I
+* \(A<sup>-1</sup>\)<sup>-1</sup> = A
+* \(AB\)<sup>-1</sup> = B<sup>-1</sup>A<sup>-1</sup>
+
+The equivalent of division for matrices is left\-multiplication by the inverse. This has the effect reversing or undoing the effect of the original matrix. 
+
+*Inversion is only defined for certain kinds of matrices, as we will see below.*
+
+### Only square matrices can be inverted
+
+Inversion is only defined for square matrices, representing a linear transform $\real^n \rightarrow \real^n$. This is equivalent to saying that the determinant of the matrix must be non\-zero: $\det(A) \neq 0$. Why?
+
+A matrix which is non-square maps vectors of dimension $m$ to dimension $n$. This means the transformation collapses or creates dimensions. Such a transformation is not uniquely reversible.
+
+For a matrix to be invertible it must represent a **bijection** (a function that maps every member of a set onto exactly one member of another set).
+
+### Singular and non-singular matrices
+
+A matrix with det\(A\)=0 is called **singular** and has no inverse.
+
+A matrix which is invertible is called **non\-singular**. 
+
+The geometric intuition for this is simple. Going back to the paralleogram model, a matrix with zero determinant has at least one zero eigenvalue. This means that at least one of the dimensions of the parallelepiped has been squashed to nothing at all. Therefore it is impossible to reverse the transformation, because information was lost in the forward transform. 
+
+All of the original dimensions must be preserved in a linear map for inversion to be meaningful; this is the same as saying det\(A\) ≠ 0.
+
+
+#### Special cases
+
+Just as for multiplication, there are many special kinds of matrices for which much faster inversion is possible. These include, among many others:
+
+* orthogonal matrix \(rows and columns are all orthogonal unit vectors\): O\(1\), A<sup>-1</sup>= A<sup>T</sup>
+* diagonal matrix \(all non\-diagonal elements are zero\): O\(n\), A<sup>-1</sup> = 1/A \(i.e. the reciprocal of the diagonal elements of A\).
+* positive\-definite matrix: O\(n<sup>2</sup>\)$ via the *Cholesky decomposition*. We won't discuss this further.
+* triangular matrix \(all elements either above or below the main diagonal are zero\): O\(n<sup>2</sup>\), trivially invertible by **elimination algorithms**.
+
+#### Special cases: orthogonal matrices
+
+An **orthogonal matrix** is a special matrix form that has A<sup>T</sup>=AA<sup>-1</sup> that is the transpose and the inverse are equivalent. All of its component eigenvectors are **orthogonal** to each other \(at 90 degrees; have an inner product of 0\), and all of its eigenvalues are 1 or \-1. An orthogonal matrix transforms a cube to a cube. It has a determinant of 1 or \-1. Any purely rotational matrix is an orthogonal matrix. 
+
+Orthogonal matrices can be inverted trivially, since transposition is essentially free in computational terms.
+
+#### Special cases: Diagonal matrices
+
+The inverse of a diagonal matrix is another diagonal matrix whose diagonal elements are the reciprocal of each of the diagonal elements of the original matrix:  
+\(A<sub>ii</sub>\)<sup>-1</sup> = 1 / A<sub>ii</sub>
+
+### Issue with inversion of sparse matrices
+
+The inverse of a **sparse matrix** is in general **not sparse**; it will \(most likely\) be dense. This means that sparse matrix algorithms virtually never involve a direct inverse, as a sparse matrix could easily be 1,000,000 x 1,000,000, but with maybe only a few million non\-zero entries, and might be stored in a few dozen megabytes. The inverse form would have 1,000,000,000,000 entries and require a terabyte or more to store!
+
+### Linear systems
+
+One way of looking at matrices is as a collection of weights of components of a vector. 
+
+The coefficients of the matrix represent the weighting to be applied.
+
+### Solving linear systems
+
+The solution of linear systems is apparently simple for cases where A is square. If Ax=y, then left\-multiplying both sides by A<sup>-1</sup> we get 
+
+x = A<sup>-1</sup>y
+
+This only works for square matrices, as A<sup>-1</sup> is not defined for non\-square matrices. This means that x and y must have the same number of dimensions.
+
+### Approximate solutions for linear systems
+
+In practice, linear systems are almost never solved with a direct inversion. The numerical problems in inverting high dimensional matrices will make the result highly unstable, and tiny variations in y might lead to wildly different solutions for x.
+
+Instead, linear systems are typically solved iteratively, either using specialised algorithms based on knowledge of the structure of the system, or using **optimisation**, which will be the topic of the next Unit.
+
+These algorithms search the possible space of x to find solutions that minimise
+\|Ax\-y\|<sub>2</sub><sup>2</sup> by adjusting the value of x repeatedly.
+
+The reason these iterative approximation algorithms can work when inversion is numerically impossible is that they only have to solve for one *specific* pair of vectors x, y. They do not have to create an inversion A<sup>-1</sup> that inverts the problem for all possible values of y, just the specific y seen in the problem. This problem is much more constrained and therefore much more stable.
+
+
+### Singular value decomposition
+
+Eigendecompositions only apply to diagonalizable matrices; which are a subset of square matrices. But the ability to "factorise" matrices in the way the eigendecomposition does is enormously powerful, and there are many problems which have non-square matrices which we would like to be able to decompose.
+
+The **singular value decomposition** \(SVD\) is a general approach to decomposing any matrix A. It is the powerhouse of computational linear algebra.
+
+The SVD produces a decomposition which splits ***ANY*** matrix up into three matrices:
+
+A = U Σ V<sup>T</sup>
+
+where 
+* A is any m x n matrix, 
+* U is a **square unitary** m x m matrix, whose columns contain the **left singular vectors**,
+* V is an **square unitary** n x n matrix, whose columns contain the **right singular vectors**,
+* Σ is a diagonal m x n matrix, whose diagonal contains the **singular values**.
+
+A **unitary** matrix is one whose conjugate transpose is equal to its inverse. If A is real, then U and V will be **orthogonal** matrices \(U<sup>T</sup> = U<sup>-1</sup>\), whose rows all have unit norm and whose columns also all have unit norm.
+
+The diagonal of the matrix Σ is the set of **singular values**, which are closely related to the eigenvalues, but are *not* quite the same thing \(except for special cases like when A is a positive semi\-definite symmetric matrix\)! The **singular values** are always positive real numbers.
+
+### Relation to eigendecomposition
+
+The SVD is the same as:   
+* taking the eigenvectors of A<sup>T</sup>A to get U
+* taking the square root of the *absolute* value of the eigenvalues λ<sub>i</sub> of A<sup>T</sup>A to get Σ<sub>i</sub> = sqrt\(\|λ<sub>i</sub>\|\)
+* taking the eigenvectors of AA<sup>T</sup> to get V<sup>T</sup>
+
+### Special case: symmetric, positive semi-definite matrix
+
+For a symmetric, positive semi\-definite matrix A, the eigenvectors are the columns of U or the columns of V. The eigenvalues are in Σ.
+
+### SVD decomposes any matrix into three matrices with special forms
+
+Special forms of matrices, like orthogonal matrices and diagonal matrices, are much easier to work with than general matrices. This is the power of the SVD.
+
+* U is orthogonal, so is a pure rotation matrix,
+* Σ is diagonal, so is a pure scaling matrix, 
+* V is orthogonal, so is a pure rotation matrix.
+
+#### Rotate, scale, rotate
+
+*The SVD splits any matrix transformation into a rotate\-scale\-rotate operation.*
+
+### Using the SVD
+
+Many matrix operations are trivial once we have the factorisation of the matrix into the three components. But some can only be performed on *on certain types of matrices*.
+
+###  Fractional powers
+
+We can use the SVD to compute interesting matrix functions like the square root of a matrix A<sup>1/2</sup>. In fact, we can use the SVD to raise a matrix to any power, *in a single operation*, provided it is a **square symmetric matrix**. 
+
+We can use the SVD to:
+
+* raise a matrix to a fractional power, e.g. A<sup>1/2</sup>, which will "part do" an operation,
+* invert a matrix: A<sup>-1</sup>, which will "undo" the operation.
+
+The rule is simple: to do any of these operations, ignore U and V \(which are just rotations\), and apply the function to the singular values elementwise:
+
+A<sup>n</sup> = V Σ<sup>n</sup> U<sup>T</sup> 
+
+For a symmetric matrix, this is the same as:
+
+A<sup>n</sup> = U Σ<sup>n</sup> V<sup>T</sup> 
+
+**Note: A<sup>1/2</sup> is not the elementwise square root of each element of A!** 
+
+Rather, we must comput the elementwise square root of Σ, then compute A<sup>1/2</sup> = U Σ<sup>1/2</sup> V<sup>T</sup>.
+
+### Inversion
+
+We can efficiently invert a matrix once it is in SVD form. For a non\-symmetric matrix, we use:
+
+A<sup>-1</sup> = V Σ<sup>-1</sup> U<sup>T</sup>
+
+This can be computed in O\(n\) time because Σ<sup>-1</sup> can be computed simply by taking the reciprocal of each of the diagonal elements of Σ. 
+
+*N.B. As a consequence, we now know that computing the SVD must take O\(n<sup>3</sup>\) time for square matrices, since inversion cannot be achieved faster than O\(n<sup>3</sup>\).*
+
+### Pseudo\-inverse
+
+We can also pseudo-invert a matrix: A<sup>\+</sup>, which will approximately "undo" the operation, even when A isn't square.
+
+This means we can solve \(approximately\) systems of equations where the number of input variables is different to the number of output variables. The **pseudo\-inverse** or **Moore\-Penrose pseudo\-inverse** generalises inversion to \(some\) non\-square matrices. 
+
+We can find approximate solutions for x in the equation:
+
+Ax = y 
+
+or in fact simultaneous equations of the type
+
+AX = Y
+
+The pseudo\-inverse of A is just 
+
+A<sup>\+</sup> = V Σ<sup>-1</sup> U<sup>T</sup>
+
+which is the same as the standard inverse computed via SVD, but taking care that Σ is the right shape - appropriate zero padding is required! Fortunately, this is taken care of by the Numpy method `np.linalg.pinv`.
+
+### Fitting lines/planes using the pseudo-inverse
+
+Suppose we have a data set which consists of multiple examples of x and y, stored in data matrices X and Y, where each example forms a row. We'd like to fit a line/plane to this data such that we can predict an individual y\-value using the formula y = Ax, or lots of y\-values using the formula Y = AX. The equation for the line/plane is represented by the matrix A, and this is what we want to find.
+
+We can find an approximate solution for $A$ by using the pseudo-inverse on our existing data set:
+
+A = X<sup>\+</sup>Y
+
+This allows us to fit a line/plane to a collection of data points, even when we have many more points than the number of dimensions required to specify the line/plane \(standard inversion would require us to have exactly the same number of data points as dimensions, in order to obtain an exact solution\). A system of equations where there are more inputs than outputs is called "overdetermined". The pseuo\-inverse allows us to solve overdetermined problems like this one.
+
+### Rank of a matrix
+
+The **rank** of a matrix is equal to the number of non\-zero singular values. 
+
+* If the number of non-zero singular values is equal to the size of the matrix, then the matrix is **full rank**. 
+* A full rank matrix has a non\-zero determinant and will be invertible. 
+* The rank tells us how many dimensions the parallelotope that the transform represents will have. 
+* If a matrix does not have full rank, it is **singular** \(non\-invertible\) and has **deficient rank**.
+* If the number of non-zero singular values is much less than the size of the matrix, the matrix is **low rank**.
+
+For example, a 4 x 4 matrix with rank 2 will take vectors in 4dim and output vectors in a 2dim subspace \(a plane\) of 4dim. The orientation of that plane will be given by the first two eigenvectors of the matrix.
+
+### Condition number of a matrix
+
+The **condition number** number of a matrix is the ratio of the largest singular value to the smallest. 
+
+* This is only defined for full rank matrices. 
+* The condition number measures how sensitive inversion of the matrix is to small changes.
+* A matrix with a small condition number is called **well-conditioned** and is unlikely to cause numerical issues. 
+* A matrix with a large condition number is **ill-conditioned**, and numerical issues are likely to be significant. 
+
+An ill-conditioned matrix is almost singular, so inverting it will lead to invalid results due to floating point roundoff errors.
+
+### Relation to singularity
+
+A **singular** matrix A is un\-invertible and has det\(A\)=0. Singularity is a binary property, and is either true or false. 
+
+**Rank** and **condition numbers** extend this concept.
+
+* We can think of **rank** as measuring "how singular" the matrix is, i.e. how many dimensions are lost in the transform.
+* We can think of the **condition number** as measuring how close a non-singular matrix is to being singular. A matrix which is nearly singular may become effectively singular due to floating point roundoff errors.
+
+### Applying decompositions
+
+#### Whitening a data set
+
+**Whitening** removes all linear correlations within a dataset. It is a *normalizing* step used to standardise data before analysis. This will be covered in the lab.
+
+Given a data set stored in matrix X, we can compute:
+
+X<sup>w</sub> = X - μ Σ<sup>-1/2</sup> 
+
+where μ is the **mean vector**, i.e. a row vector containing the mean of each column in X, and Σ is the **covariance matrix** \(not the matrix of singular values\).
+
+This equation takes each column of X and subtracts the mean of that column from every element in the column, so that each column is centred on zero. Then it multiplies by the inverse square root of the covariance matrix, which is a bit like dividing each column of X by its standard deviation to normalise the spread of values in each column. However, it is more rigorous than that, because it also removes any correlations between the columns.
+
+To summarise, whitening does the following:
+
+* centers the data around its mean, so it has **zero mean**.
+* "squashes" the data so that its distribution is spherical and has **unit covariance**.
+
+Removing the mean is easy. The difficult bit is computing the inverse square root of the covariance matrix. N.B. this is *definitely not* the inverse square root of the elements of the covariance matrix!
+
+Fortunately, we can compute it easily by taking the SVD of the covariance matrix. We compute the inverse square root in one step, by taking the reciprocal of the square root of each of the singular values and then reconstructing. 
+
+The whitened version of the data set will have all linear correlations removed. This is an important preprocessing step when applying machine learning and statistical analysis algorithms. 
+
+## Week 6
+
+### What is optimisation?
+
+**Optimisation** is the process of adjusting things to make them better. In computer science, we want to do this *automatically* by a algorithm. An enormous number of problems can be framed as optimisation, and there are a plethora of algorithms which can then do the automatic adjustment *efficiently*, in that they find the best adjustments in few steps. In this sense, *optimisation is search*, and optimisation algorithms search efficiently using mathematical structure of the problem space.
+
+Optimisation is at the heart of machine learning; it is a critical part of all kinds of manufacturing and industrial processes, from shipbuilding to circuit design; it can even be used to automatically make scatterplot graphs easier to read.
+
+### One algorithm to rule them all: no special cases
+
+Optimisation algorithms allow us to apply *standard algorithms* to an enormous number of problems. We don't have special cases for every specific problem; instead we formulate the problems so that generic algorithms can solve them. As a consequence, to apply optimisation algorithms, the problems must be specified formally. There is a real art in specifying problems so that optimisation can tackle them.
+
+### Parameters and objective function
+
+
+There are two parts to an optimisation problem:
+
+* **parameters**: the things we can adjust, which might be a scalar or vector or other array of values, denoted θ. The parameters exist in a **parameter space** -- the set of all possible configurations of parameters denoted Θ. This space is often a **vector space** like n, but doesn't need to be. For example, the set of all knob/slider positions on the synthesizer panel above could be considered points in a subset of a vector space. If the parameters do lie in a vector space, we talk about the **parameter vector** θ.
+
+
+* **the objective function**: a function that maps the parameters onto a *single numerical measure* of how good the configuration is. L\(θ\).  The output of the objective function is a single scalar. The objective function is sometimes called the *loss function*, the *cost function*, *fitness function*, *utility function*, *energy surface*, all of which refer to \(roughly\) the same concept. It is a quantitative \("objective"\) measure of "goodness".
+
+*The desired output of the optimisation algorithm is the parameter configuration that minimises the objective function.*
+
+Writing this mathematically, this is the min\(\) (the argument that produces the minimum value) of the objective function:
+
+
+θ<sup>\*</sup> = min\(θ in Θ\) L\(θ\) 
+
+
+* θ<sup>\*</sup> is the configuration that we want to find; the one for which the objective function is lowest. 
+* Θ is the set of all possible configurations that θ could take on, e.g. N. 
+
+Most optimisation problems have one more component:
+
+* **constraints**: the limitations on the parameters. This defines a region of the parameter space that is feasible, the **feasible set** or **feasible region**. For example, the synthesizer above has knobs with a fixed physical range, say 0-10; it isn't possible to turn them up to 11. Most optimisation problems have constraints of some kind; 
+
+> "design a plane *\(adjust parameters\)* that flies as fast as possible *\(objective function\)*, and costs less than `$180M` *\(constraints\)*.
+
+We usually think of the objective function as a **cost** which is *minimised*. Any maximisation problem can be reframed as a minimisation problem by a simple switch of sign, so this does not lose generality. If if we wanted to optimise the knob settings on our synthesizer to make a really good piano sound \("maximise goodness"\), we could instead frame this as a problem of minimising the difference between the sound produced and the sound of a piano. We would, of course, need to have a **precise** way of measuring this difference; one that results in a single real number measure of cost.
+
+### Minimising differences
+
+As in this example, it is common to have express problems in a form where the objective function is a  **distance between an output and a reference is measured**. Not every objective function has this form, but many do.
+
+That is, we have some function y<sup>'</sup> = f\(x;θ\) that produces an output from an input x governed by a set of parameters θ, and we measure the difference between the output and some reference y \(e.g. using a vector norm\):
+
+
+L\(θ\) = \|y<sup>'</sup> \- y\| = \|f(x};θ\) - y\| 
+
+This is very common in **approximation problems**, where we want to find a function that approximates a set of measured observations. This is the core problem of machine learning.
+
+Note that the notation f\(x;θ\) just means that the output of f depends both on some \(vector\) input x and on a parameter vector θ. Optimisation only ever adjusts θ, and the vector x is considered fixed during optimisation \(it might, for example, represent a collection of real\-world measurements\). 
+
+### Evaluating the objective function
+
+It may be **expensive** to evaluate the objective function. For example:
+* the computation might take a long time \(invert a 10000x10000 matrix\);
+* or it might require a real\-world experiment to be performed \(do the users like the new app layout?\);
+* or it might be dangerous \(which wire on the bomb should I cut next?\);
+* or it might require data that must be bought and paid for \(literally expensive\). 
+
+In all cases, it will take some computational power to evaluate the objective function, and therefore will have a time cost.
+
+This means that a *good* optimisation algorithm will find the optimal configuration of parameters with few queries \(evaluations of the objective function\). To do this, there must be mathematical **structure** which can help guide the search. Without any structure at all, the best that could be done would be to randomly guess parameter configurations and choose the lowest cost configuration after some number of iterations. This isn't typically a feasible approach.
+
+### Discrete vs. continuous
+
+If the parameters are in a continuous space \(typically R<sup>n</sup>\), the problem is one of **continuous optimization**; if the parameters are discrete, the problem is **discrete optimization**. Continuous optimisation is usually easier because we can exploit the concept of **smoothness** and **continuity**.
+
+#### Properties of optimisation
+
+Every optimisation problem has two parts:
+* **Parameters**, the things that can be adjusted.
+* **Objective function**, which measures how good a particular set of parameters are.
+
+An optimisation problem usually also has:
+* **Constraints**, that define the feasible set of parameters.
+
+The **objective function** is a function *of the parameters* which returns a *single scalar value*, representing how good that parameter set is. 
+
+### Throwing a stone
+
+For example, if I wanted to optimise how far I could throw a stone, I might be able to adjust the throwing angle. This is the *parameter* I could tweak \(just one parameter θ = \[α\], in this case\). 
+
+The objective function must be a function which depends on this parameter. I would have to *simulate* throwing the ball to work out how far it went and try and make it go further and further.
+
+### Focus: continuous optimisation in real vector spaces
+
+This course will focus on optimisation of continuous problems in n. That is θ in n = \[θ<sub>1</sub>, θ<sub>2</sub>, ..., θ<sub>n</sub>\] and the optimisation problem is one of:
+
+θ<sup>\*</sup> = min\(θ in \n\) L\(θ\), \(subject to constraints\)
+
+This it the problem of searching a continuous vector space to find the point where L\(θ\) is smallest. We will typically encounter problems where the objective function is *smooth* and *continuous* in this vector space; note that the parameters being elements of a continuous space does not necessarily imply that the objective function is continuous in that space.
+
+Some optimisation algorithms are **iterative**, in that they generate successively better approximations to a solution. Other methods are **direct**, like linear least squares \(which we'll briefly discuss\), and involving finding a minimum exactly in one step. We will focus primarily on **iterative, approximate** optimisation in this course.
+
+#### A function of space
+
+The objective function maps points in space to values; i.e. it defines a curve/surface/density/etc. which varies across space. We want to find, as quickly as possible, a point in space where this is as small as possible, without going through any "walls" we have defined via constraints.
+
+### Geometric median: optimisation in n2
+
+* **Problem** Find the median of a `>1D` dataset. The standard median is computed by sorting and then selecting the middle element \(with various rules for even sized datasets\). This doesn't work for higher dimensions, and there is no straightforward direct algorithm. But there is an easy definition of the median: it is the vector that minimises the sum of distances to all vectors in the dataset.
+
+A very simple optimisation example is to find a point that minimises the distance to a collection of other points \(with respect to some norm\). We can define:
+
+* **parameters** θ=\[x, y, ...\], a position  in 2D. 
+* **objective function** the sum of distances between a point and a collection of target points x<sub>i</sub>:
+
+L\(θ\) \= Σ \|\|θ \- x<sub>i</sub>\|\|<sup>2</sup>
+
+This will try and find a point in space \(represented as θ\) which minimises the distances to the target points. We can solve this, starting from some random initial condition \(guess for θ\):
+
+### An example of optimisation in N
+
+We can work in higher dimensions just as easily. A slightly different problem is to try and find a layout of points in such that the points are **evenly spaced** \(with respect to some norm\). In this case we have to optimise a whole collection of points, which we can do by rolling them all up into a single parameter vector.
+
+We can define:
+
+* **parameters** θ=\[x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>, y<sub>2</sub>, ...\], an array of positions of points in 2D. Note: we have "unpacked" a sequence of 2D points into a higher dimensional vector, so that a *whole configuration* of points is a single point in a vector space.
+* **loss function** the sum of squares of differences between the Euclidean pairwise distances between points and some target distance:
+
+\Σ for i Σ for j \(α \- \|\|x<sup>i</sup> \- x<sup>j</sup>\|\|<sup>2</sup>\)<sup>2</sup>
+
+This will try and find a configuration of points that are all α units apart.
+
+### Constrained optimisation
+
+If a problem has constraints on the parameters beyond purely minimising the objective function then the problem is **constrained optimisation**.
+
+A constrained optimisation might be written in terms of an equality constraint:    
+θ<sup>\*</sup> = min\(θ in Θ\) L\(θ\), subject to c\(θ\) = 0  
+or an inequality:  
+θ<sup>\*</sup> = min\(θ in Θ\) L\(θ\) ,subject to c\(θ\) ≤ 0   
+where c\(θ\) is a function that represents the constraints.
+
+* An **equality** constraint can be thought of as constraining the parameters to a *surface*, to represent a tradeoff. For example, c\(θ\) =\|θ\|<sup>2</sup>\-1 forces the parameters to lie on the surface of a unit sphere. An equality constraint might be used when trading off items where the total value must remain unchanged \(e.g. the payload weight in a satellite might be fixed in advance\).
+
+* An **inequality** constraint can be thought of as constraining the parameters to a *volume*, to represent bounds on the values. For example, c\(θ\) =\|θ\|<sub>∞</sub>\-10 forces the parameters to lie within a box extending \(\-10, 10\) around the origin -- perhaps the range of the knobs on the synthesizer.
+
+#### Common constraint types
+
+A **box constraint** is a simple kind of constraint, and is just a requirement that θ lie within a box inside $R^n$; for example, that every element 0<θ<sub>i</sub><1 \(all parameters in the positive unit cube\) or θ<sub>i</sub>\>0 \(all parameters in the positive **orthant**\). This is an inequality constraint with a simple form of c\(θ\). Many optimisation algorithms support box constraints.
+
+A **convex constraint** is another simple kind of constraint, where the constraint is a collection of inequalities on a convex sum of the parameters θ. Box constraints are a specific subclass of convex constraints. This is equivalent to the feasible set being limited by the intersection of many of **planes/hyperplanes** \(possibly an infinite number in the case of curved convex constraints\).
+
+**Unconstrained optimization** does not apply any constraints to the parameters, and any parameter configuration in the search space is possible. In many problems, pure unconstrained optimisation will lead to unhelpful results \("the airplane will get the best lift if the wing is two hundred miles long" -- which might be true but impossible to construct\).
+
+
+### Constraints and penalties
+
+Unconstrained optimisation rarely gives useful answers on its own. Consider the example of the airfoil. Increasing lift might be achieved by making the airfoil length longer and longer. At some point, this might become physically impossible to build.
+
+Although we often represent $\theta$ as being in $\real^N$, the feasible set is typically not the entire vector space. There are two approaches to deal with this:
+
+#### Constrained optimisation
+
+* Use an optimisation algorithm that supports hard constraints inherently. This is straightforward for certain kinds of optimisation, but trickier for general optimisation.Typically constraints will be specified as either a **convex region** or a simple \(hyper\)rectangular region of the space \(a **box constraint**\).
+* **Pros**: 
+    * Guarantees that solution will satisfy constraints.
+    * May be able to use constraints to speed up optimisation.
+* **Cons**: 
+    * may be less efficient than unconstrained optimization. 
+    * Fewer algorithms available for optimisation.
+    * may be hard to specify feasible region with the parameters available in the optimiser.
+
+#### Soft constraints
+
+* Apply penalties to the objective function to "discourage" solutions that violate the constraints. This is particularly appropriate if the constraints really are soft (it doesn't perhaps matter if the maximum airfoil length is 1.5m or 1.6m, but it can't be 10m). In this case, the penalties are just terms added to the objective function. The optimiser stays the same, but the objective function is modified.
+
+L(θ<sup>'</sup>') = L\(θ\) + λ\(θ\), where λ\(θ\) is a **penalty function** with an increasing value as the constraints are more egregiously violated.
+
+* **Pros**
+    * any optimiser can be used
+    * can deal with *soft* constraints sensibly
+* **Cons:** 
+    * may not respect important constraints, particularly if they are very sharp
+    * can be hard to formulate constraints as penalties
+    * cannot take advantage of efficient search in constrained regions of space
+
+### Relaxation of objective functions
+
+It can be much harder to solve discrete optimization and constrained optimization problems efficiently; some algorithms try and find similar continuous or unconstrained optimization problems to solve instead. This is called **relaxation**; a **relaxed** version of the problem is solved instead of the original hard optimization problem. For example, sometimes the constraints in a problem can be absorbed into the objective function, to convert a constrained problem to an unconstrained problem. 
+
+#### Penalisation
+
+**Penalisation** refers to terms which augment an objective function to minimise some other property of the solution, typically to approximate constrained optimisation. This is widely used in approximation problems to find solutions that **generalise well**; that is which are tuned to approximate some data, but not *too* closely.
+
+This is a relaxation of a problem with hard constraints \(which needs specialised algorithms\) to a problem with a simple objective function which works with any objective function. If you have encountered **Lagrange multipliers** before, these are an example of a relaxation of hard constraints to penalty terms.
+
+### Penalty functions
+
+A **penalty function** is just a term added to an objective function which will disfavour "bad solutions". 
+
+We can return to the stone throwing example, and extend our model. Say
+I can control the angle of a stone throw; perhaps I can also control how hard I throw it. But there is a maximum limit to my strength. This is a constraint \(an inequality constraint, which limits the maximum value of the strength parameter\).
+
+* Objective function: how far away does the stone land? L\(θ\) = throw_distance\(θ\)
+* Parameters: angle of the throw $\alpha$ and strength of the throw v \(exit velocity\), θ=\[α, v\]$
+* Constraint: strength of throw 0 ≤ v ≤ v<sub>k</sub>, more than zero and less than some maximum strength.
+
+There are two options:
+* Use a constrained optimisation algorithm, which will not even search solutions which exceed the maximum strength.
+* Change the objective function to make over\-strenuous throwing unacceptable.
+
+#### Option 1: constrained optimisation
+
+Use a \(pre\-existing\) algorithm which already supports constraints directly. Guarantees solutions will lie inside bounds.
+
+#### Option 2: add a penalty term
+
+L'\(θ\) = L\(θ\) \+ λ\(theta\)
+
+
+### Properties of the objective function
+
+#### Convexity, global and local minima
+
+An objective function may have **local minima**. A **local minimum** is any point where the objective functions increases in every direction around that point \(that parameter setting\). Any change in the parameters at that point increases the objective function.
+
+An objective function is **convex** if it has a *single, global minimum*. For example, every quadratic function is a parabola \(in any number of dimensions\), and thus has exactly one minimum. Other functions might have regions that have local minimums but which **aren't** the smallest possible value the function could take on.
+
+**Convexity** implies that finding any minimum is equivalent to finding the global minimum -- the guaranteed best possible solution.  This minimum is the global minimum. In a convex problem, if we find a minimum, we can stop searching. If we can show there *is no minimum*, we can also stop searching.
+
+#### Convex optimisation
+
+If the objective function is **convex** *and* any constraints form convex portions of the search space, then the problem is **convex optimisation**. There are very efficient methods for solving convex optimisation problems, even with tens of thousands of variables. These include: 
+
+* the constraints and objective function are linear \(**linear programming**\)
+* quadratic objective function and linear constraints \(**quadratic programming**\)
+* or a some specialised cases \(**semi\-quadratic programming**, **quadratically constrained quadratic program**\). 
+
+These are incredible powerful algorithms for solving these specific classes of optimisation problems. 
+
+Nonconvex problems require the use of **iterative** methods \(although ways of *approximating* nonconvex problems with convex problems do exist\).
+
+#### Continuity
+
+An objective function is **continuous** if for some very small adjustment to $\theta$ there is an *arbitrarily* small change in L\(θ\). This means that there will never be "nasty surprises" if we move slowly enough through the space of θ; no sudden jumps in value.
+
+If a function is discontinuous, local search methods are not guaranteed to converge to a solution. Optimisation for discontinuous objective functions is typically much harder than for continuous functions. This is because there could be arbitrary changes in the objective function for any adjustment to the parameters.
+
+Continuity is what can make continuous optimisation easier than discrete optimisation. As we will see next week, being continuous and **differentiable** makes continuous optimisation even more powerful.
+
+### Algorithms
+#### Direct convex optimisation: least squares
+
+Sometimes we have an optimisation problem which we can specify such that the solution can be computed in one step. An example is **linear least squares**, which solves objective functions of the form:
+    
+min<sup>x</sup>\(L\(x\)\) = \|Ax\-y\|<sub>2</sub><sup>2</sup>, 
+
+that is, it finds x that is closest to the solution Ax=y in the sense of minimising the squared L2 norm. The squaring of the norm just makes the algebra easier to derive. 
+
+This equation is **convex** -- it is a quadratic function and even in multiple dimensions it must have a single, global minimum, which can be found directly. The reason we **know** it is convex is that it has no terms with powers greater than 2 \(no x<sup>3</sup> etc.\) and so is quadratic. Quadratic functions only ever have zero or one minimum.
+
+### Line fitting
+We will examine this process for the simplest possible **linear regression** example: finding gradient $m$ and offset $c$ for the line equation y=mx\+c such that the squared distance to a set of observed \(x,y\) data points is minimised. This is a search over the θ=\[m,c\] space; these are the parameters. The objective function is L\(θ\) = ∑ \(y \- mx<sub>i</sub>\+c)<sup>2</sup>, for some known data points \[x<sub>0</sub>, y<sub>0</sub>\], \[x<sub>1</sub>, y<sub>1</sub>\], etc.
+
+We can solve this directly using the **pseudo-inverse** via the SVD. This is a problem that can be solved directly in one step.
+
+
+### Iterative optimisation
+
+**Iterative optimisation** involves making a series of steps in parameter space. There is a **current parameter vector** \(or collection of them\) which is adjusted at each iteration, hopefully decreasing the objective function, until optimisation terminates after some **termination criteria** have been met.
+
+Iterative optimisation algorithm:
+
+1. choose a starting point x<sub>0</sub>
+1. while objective function changing
+    1. adjust parameters
+    1. evaluate objective function
+    1. if better solution found than any so far, record  it
+1. return best parameter set found
+
+
+### Regular search: grid search
+
+**Grid search**, is a straightforward but inefficient optimisation algorithm for multidimensional problems. The parameter space is simply sampled by equally dividing the feasible set in each dimension, usually with a fixed number of divisions per dimension.
+
+The objective function is evaluated at each $\theta$ on this grid, and the lowest loss θ found so far is tracked. This is simple, and can work for 1D optimisation problems. It is sometimes used to optimise *hyperparameters* of machine learning problems where the objective function may be complex but finding the absolute minimum isn't essential.
+
+
+### Revenge of the curse of dimensionality
+
+> Why bother optimising? Why not just search every possible parameter configuration? 
+
+Even in relatively small parameter spaces, and where the objective function is known to be smooth this doesn't scale well.  Simply divide up each dimension into a number of points \(maybe 8\), and then try every combination on the grid of points that this forms, choosing the smallest result.
+
+
+While this is fine in 1D \(just check 8 points\) and 2D \(just check 64 points\), it breaks down completely if you have a 100 dimensional parameter space. This would need evaluations of the objective function! The synthesizer above has around 100 dimensions, as an example.
+
+Even just 3 points in each dimension is totally unreasonable.
+        
+### Density of grid search
+
+If the objective function is not very smooth, then a much denser grid would be required to catch any minima.
+
+Real optimisation problems might have hundreds, thousands or even billions of parameters \(in big machine learning problems\). Grid search and similar schemes are *exponential* in the number of dimensions of the parameter space.
+
+#### Pros
+
+* Works for any continuous parameter space.
+* Requires no knowledge of the objective function.
+* Trivial to implement.
+
+#### Cons
+
+* **Incredibly** inefficient
+* Must specify search space bounds in advance.
+* Highly biased to finding things near the "early corners" of the space.
+* Depends heavily on number of divisions chosen.
+* Hard to tune so that minima are not missed entirely.
+
+
+### Hyperparameters
+
+Grid seach depends on the **range** searched and the spacing of the **divisions** of the grid. Most optimisation algorithms have similar properties that can be tweaked.
+
+These properties, which affect the way in which the optimiser finds a solution, are called **hyperparameters**. They are not parameters of the objective function, but they do affect the results obtained. 
+
+A perfect optimiser would have no hyperparameters -- a solution should not depend on how it was found. But in practice, all useful optimisers have some number of hyperparameters which will affect their performance. Fewer hyperparameters is usually better, as it is less cumbersome to tune the optimiser to work.
+
+### Simple stochastic: random search
+
+The simplest such algorithm, which makes *no* assumptions other than we can draw random samples from the parameter space, is **random search**.  
+
+The process is simple:  
+* Guess a random parameter θ
+* Check the objective function L\(θ\)
+* If L\(θ\)<L\(θ<sup>\*</sup>) \(the previous best parameter θ<sub>\*</sub>\), set θ<sub>\*</sub>=θ
+
+There are many possibilities for a termination condition, such as stopping after a certain number of iterations after the last change in the best loss. The simple code below uses a simple fixed iteration count and therefore makes no guarantee that it finds a good solution at all.
+
+### Pros
+* Random search cannot get trapped in local minima, because it uses no local structure to guide the search. 
+* Requires no knowledge of the structure of the objective function \- not even a topology.
+* Very simple to implement.
+* Better than grid search, almost always.
+
+### Cons
+* *Extremely inefficient* and is usually only appropriate if there is no other mathematical structure to exploit.
+* Must be possible to randomly sample from the parameter space \(usually not a problem, though\).
+* Results do not necessarily get better over time. Best result might be found in the first step or a million steps later. There is no way to predict how the optimisation will proceed.
+
+### bogosort
+
+The \(joke\) sorting algorithm **bogosort** uses random search to sort sequences. The algorithm is simple:
+
+* randomise the order of the sequence
+* check if it is sorted
+    * if it is, stop; otherwise, repeat
+
+This is amazingly inefficient, taking O\(n!\) time to find a solution, which is even worse than exponential time. In this application, the parameter space \(all possible orderings\) is so huge that random search is truly hopeless. It is particularly poor because of the binary nature of the loss function -- either it is perfect, or it is disregarded, so we will never even get approximately correct results.
+
+However, it is a correct implementation of a sorting algorithm.
+
+### Metaheuristics
+
+There are a number of standard **meta-heuristics** than can be used to improve random search.
+
+These are:  
+* **Locality** which takes advantage of the fact the objective function is likely to have similar values for similar parameter configurations. This assumes *continuity* of the objective function.
+* **Temperature** which can change the rate of movement in the parameter space over the course of an optimisation. This assumes the existence of local optima.
+* **Population** which can track multiple simultaneous parameter configurations and select/mix among them.
+* **Memory** which can record good or bad steps in the past and avoid/revisit them.
+
+#### Locality
+
+**Local search** refers to the class of algorithms that make *incremental* changes to a solution. These can be much more efficient than random search or grid search when there is some continuity to the objective function. However, they are subject to becoming trapped in **local minima**, and not reaching the **global minimum**. Since they are usually exclusively used for nonconvex problems, this can be a problem.
+
+This implies that the output of the optimisation depends on the **initial conditions**. The result might find one local minimum starting from one location, and a different local minimum from another starting parameter set.
+
+Local search can be thought of forming **trajectory** \(a path\) through the parameter space, which should hopefully move from high loss towards lower loss.
+
+#### Hill climbing: local search
+
+**Hill climbing** is a modification of random search which assumes some topology of the parameter space, so that there is a meaningful concept of a **neighbourhood** of a parameter vector; that we can make incremental changes to it. Hill climbing is a form of **local search**, and instead of drawing samples randomly from the parameter space, randomly samples configurations *near* the current best parameter vector. It makes incremental adjustments, keeping transitions to neighbouring states only if they improve the loss.
+
+**Simple hill climbing** adjusts just one of the parameter vector elements at a time, examining each "direction" in turn, and taking a step if it improves things. **Stochastic hill climbing** makes a random adjustment to the parameter vector, then either accepts or rejects the step depending on whether the result is an improvement.
+
+The name *hill climbing* comes from the fact that the algorithm randomly wanders around, only ever taking uphill (or downhill, for minimisation) steps. Because hill climbing is a **local search** algorithm, it is vulnerable to getting stuck in local minima. Basic hill climbing has no defence against minima and will easily get trapped in poor solutions if they exist. Simple hill climbing can also get stuck behind **ridges** and all forms of hill climbing struggle with **plateaus** where the loss function changes slowly. 
+
+##### Pros
+* Not much more complicated than random search
+* Can be *much* faster than random search
+
+##### Cons
+* Hard to choose how much of an adjustment to make
+* Can get stuck in minima
+* Struggles with objective function regions that are relatively flat
+* Requires that the objective function be \(approximately\) continuous
+
+#### Simulated annealing
+
+**Simulated annealing** extends hill-climbing with the ability to sometimes randomly go uphill, instead of always going downhill. It uses a **temperature schedule** that allows more uphill steps at the start of the optimisation and fewer ones later in the process. This is used to overcome ridges and avoid getting stuck in local minima.
+
+The idea is that allowing random "bad jumps" early in a process can help find a better overall configuration.
+
+##### Accepting you have to go uphill sometimes
+
+Simulated annealing uses the idea of **acceptance probability**. Instead of just accepting any random change that decreases the loss, we randomly accept some proportion of jumps that might temporarily increase the loss, and slowly decrease the proportion of these over time.
+
+Given the current loss l = L\(θ\) and a proposed new loss l<sup>'</sup> = L\(θ\+Δθ\), where Δθ represents a random perturbation of θ, we can define a probability P\(l, l<sup>'</sup>, T\(i\)\) which is the probability of jumping from θ to Δθ at iteration i.
+
+A common rule is:
+* P\(l, l<sup>'</sup>, T\(i\)\)=1 if l<sup>'</sup> < l, i.e. always go downhill.
+* P\(l,l<sup>'</sup>,T\(i\)) = e<sup>{\-(l\-l<sup>'</sup>)</sup>T\(i\) i.e. take uphill jumps if the relative decrease is small.
+
+T\(i\) is typically an exponentially decaying function of the iteration number, so that large jumps are accepted at the start, even if they go *way* uphill, but there is a decreasing tendency to make uphill jumps as time goes on.
+
+For example, T\(i\) = e<sup>\-i / r</sup>, where i is the iteration number, r is the cooling rate and T is the temperature.
+
+#### Pros
+
+* Much less sensitive to getting trapped in minima than hill climbing
+* Easy to implement
+* Empirically very effective
+* Fairly effective even in mixed continuous/discrete settings.
+
+#### Cons
+
+* Depends on good choice for the temperature schedule and neighbourhood function, which are extra free parameters to worry about.
+* No guarantees of convergence
+* Slow if the uphill steps are not actually needed
+
+### More complicated example: finding evenly spaced points
+
+This isn't very impressive for the line fitting, which is a very simple convex function; there are no local minima to get trapped in. We can look at the problem of finding a collection of points that are evenly spaced. This is non\-convex \(and has an infinite number of equal minima\), and much harder to solve than fitting a line to some points.
+
+This is a task particularly suited to simulated annealing\-style approaches.
+
+## Population
+
+Another nature\-inspired variant of random search is to use a **population** of multiple competing potential solutions, and to apply some analogue of **evolution** to solving optimisation. This involves some of:
+
+* **mutation** \(introducing random variation\)
+* **natural selection** \(solution selection\)
+* **breeding** \(interchange between solutions\)
+
+This class of algorithms are often called **genetic algorithms** for obvious reasons. All genetic algorithms maintain some population of potential solutions \(a set of vectors θ<sub>1</sub>, θ<sub>2</sub>, θ<sub>3</sub>, ...\), and some rule which is used to preserve some members of the population and cull others. The parameter set is referred to as the **genotype** of a solution.
+
+Simple population approaches simply use small random perturbations and a simple selection rule like "keep the top 25% of solutions, ordered by loss". Each iteration will perturb the solutions slightly by random mutation, cull the weakest solutions, then copy the remaining "fittest" solutions a number of times to produce the offspring for the next step. The population size is held constant from iteration to iteration. This is just random local search with population. The idea is that this can explore a larger area of the space than simple local search and maintain multiple possible hypotheses about what might be good during that time.
+
+### Genetic algorithms: population search
+#### Pros
+
+* Easy to understand and applicable to many problems.
+* Requires only weak knowledge of the objective function
+* Can be applied to problems with both discrete and continuous components.
+* Some robustness against local minima, although hard to control.
+* Great flexibility in parameterisation: mutation schemes, crossover schemes, fitness functions, selection functions, etc.
+
+#### Cons
+
+* Many, many "hyperparameters" to tune which radically affect the performance of the optimisation. How should you choose them?
+* No guarantee of convergence; *ad hoc*.
+* \(Very\) slow compared to using stronger knowledge of the objective function.
+* Many evaluations of objective function are required: one per population member per iteration.
+
+### Memory
+
+The optimisation algorithms we have seen so far are **memoryless**. They investigate some part of the solution space, check the loss, then move on. They may end up checking the same, or very similar, solutions over and over again. This inefficiency can be mitigated using some form of **memory**, where the optimiser remembers where "good" and "bad" bits of the parameters space are, and  makes decisions using this memory. In particular, we want to remember good **paths in solution space**. 
+
+#### Pros
+* Can be very effective in spaces where good solutions are separated by large, narrow valleys.
+* Can use fewer evaluations of the objective function than genetic algorithm if pheromones are effective.
+* When it works, it really works.
+
+#### Cons
+* Moderately complex algorithm to implement.
+* No guarantee of convergence; *ad hoc*.
+* Even *more* hyperparameters than genetic algorithms.
+* People think you work with ants.
+
+# Quality of optimisation
+
+### Convergence	
+
+An optimisation algorithm is said to **converge** to a **solution**. In convex optimisation, this means that the **global minimum** has been found and the problem is solved. In non\-convex optimisation, this means a **local minimum** has been found from which the algorithm cannot escape.
+
+A good optimisation algorithm converges quickly. This means that the drop in the objective function should be steep, so that each iteration is making a big difference. A bad optimisation algorithm does not converge at all \(it may wander forever, or diverge to infinity\). Many optimisation algorithms only converge under certain conditions; the convergence depends on the initial conditions of the optimisation.
+
+#### Guarantees of convergence
+
+Some optimisation algorithms are guaranteed to converge if a solution exists; while others \(like most heuristic optimisation algorithms\) are not guaranteed to converge even if the problem has a solution. For example, a random search might wander the space of possibilities forever, never finding the specific configuration that minimises \(or even reduces\) the loss.
+
+For iterative solutions, a plot of the objective function value against iteration is a helpful tool in diagnosing convergence problems. Ideally, the loss should drop as fast as possible.
+
+
+### Tuning optimisation
+
+Optimisation turns specific problems into ones that can be solved with a general algorithm, as long as we can write down an objective function. However, optimisation algorithms have **hyperparameters**, which affect the way in which the search for the optimum value is carried out. Using optimisers effectively requires adjusting these hyperparameters.
+
+#### Use the right algorithm
+
+* If you know the problem is **least-squares** use a specialised least-squares solver. You might be able to solve directly, for example with the pseudo\-inverse.
+* If you know the problem is **convex**, use a convex solver. This is radically more efficient than any other choice if its applicable.
+* If you know the derivatives of the objective function, or can compute them using automatic differentiation, use a **first-order** method \(or second order, if you can\)
+* If you don't know any of these things, use a general purpose **zeroth\-order** solver like **simulated annealing** or a **genetic algorithm**.
+
+
+### What can go wrong?
+#### Slow progress
+
+Slow progress typically occurs in local search where the steps made are too small. For example, gradient descent with a very small 𝛿 or hill climbing with a tiny neighbourhood function will only be able to search a very small portion of the space. This will correspond to a very slowly decreasing loss plot.
+
+#### Noisy and diverging performance
+
+Local search can also become unstable, particularly if jumps or steps are too large an the optimiser bounces around hopelessly. The optimisation can diverge if the objective function has infinitely decreasing values in some direction \("the abyss"\), and this typically requires constraints to limit the **feasible set**.
+
+
+### Getting stuck
+
+Some optimisers can get stuck, usually at critical points of the objective function.  
+* **Plateaus** can cause memoryless algorithms to wander, and derivative\-based algorithms to cease moving entirely. Techniques like **momentum** and other forms of **memory** can limit this effect.
+* **Local minima** can completely trap pure local search methods and halt progress. Some metaheuristics, like random restart can mitigate this.
+* **Saddle points** can trap or slow gradient descent methods, which have trouble finding the *best* direction to go in when the function is increasing in some directions and decreasing in others. 
+* **Very steep or discontinuous** objective functions can produce insurmountable barriers for gradient descent. Stochastic methods, like stochastic gradient descent, can "blur out" these boundaries and still make progress.
+
+## Week 7 
+
+**Deep learning** or **deep neural networks** have become a major part of modern machine learning research. They have had astonishing success in fields like speech recognition, machine translation, image classification and image synthesis. The basic problem of deep learning is one of finding an approximating function. In a simple model, this might work as follows: Given some observations x<sub>1</sub>, x<sub>2</sub>, ..., x<sub>n</sub> and some corresponding outputs y<sub>1</sub>, y<sub>2</sub>, ..., y<sub>n</sub>, find a function y' = f\(x;θ\) with parameters θ, such that we have:
+
+θ' = min\(∑\|\|f\(xi;θ\)\|\|\)
+
+where distance is some measure of how close the output of f and the expected output y<sub>i</sub> are \(the specific distance used varies with the problem\). The idea is that we can learn f such that we can generalise the transform to x we haven't seen yet. This is obviously an optimisation problem. But deep neural networks can have *tens of millions* of parameters - a very long θ vector. How is it possible to do optimisation in reasonable time in such a large parameter space?
+
+### Backpropagation
+
+The answer is that these networks are constructed in a very simple \(but clever way\). A traditional neural network consists of a series of **layers**, each of which is a **linear map** \(just a matrix multiply\) followed by a simple, fixed nonlinear function.  Think: rotate, stretch \(linear map\) and fold \(simple *fixed* nonlinear folding\). The output of one layer is the input for the next.
+
+The linear map in each layer is \(of course\) specified by a matrix, known as the **weight matrix**. The network is completely parameterised by the entries of the weight matrices for each layer \(all of the entries of these matrices can be seen as the parameter vector θ\). The nonlinear function G\(x\) is  fixed for every layer and cannot vary; it is often a simple function which "squashes" the range of the output in some way \(like `tanh`, `relu` or `sigmoid` -- you don't need to know these\). Only the weight matrices change during optimisation.
+
+y<sub>i</sub> = G\(W<sub>i</sub>x<sub>i</sub> \+ b<sub>i</sub>\)
+
+### Why not use heuristic search?
+
+Heuristic search methods like random search, simulated annealing and genetic algorithms are easy to understand, easy to implement and have few restrictions on the problems they can be applied to. So why not always use those approaches?
+
+* They can be very slow; it may take many iterations to approach a minimum and require significant computation to compute each iteration.
+* There is no guarantee of convergence, or even of progress. The search can get stuck, or drift slowly over plateaus.
+* There are a huge number of **hyperparameters** that can be tweaked \(temperature schedules, size of population, memory structure, etc.\). How should these be chosen? Optimal choice of these parameters becomes an optimisation problem in itself.
+
+For optimisation problems like deep neural networks, heuristic search is hopelessly inadequate. It is simply too slow to make progress in training networks with millions of parameters. Instead, **first-order** optimisation is applied. **First-order algorithms**, that we will discuss today, can be *orders of magnitude* faster than heuristic search.
+
+*Note: if an objective function is known to be convex with convex constraints, there are much better methods still for optimisation, which can often run exceptionally quickly with guaranteed convergence.*
+
+### Jacobian: matrix of derivatives
+
+* If f\(x\) is a scalar function of a scalar x, f'\(x\) is the first derivative of f w.r.t. x, i.e. d / dx of f\(x\). The second derivative is written f''\(x\) = d<sub>2</sub> / dx<sub>2</sub> of f\(x\).
+
+* If we generalise this to a **vector** function y = f\(x\), then we have a rate of change \(derivative\) between every component of the input and every component of an output at any specific input x. We can collect this derivative information into a matrix called the **Jacobian matrix**, which characterises the slope *at a specific point x*. If the input x ∈ n and the output y ∈ m, then we have an m x n matrix.
+
+This simply tells us how much each component of the output changes as we change any component of the input -- the generalised "slope" of a vector\-valued function. This is a very important way of characterising the variation of a vector function at a point x, and is widely used in many contexts. In the case where f maps n → n \(from a vector space to the same vector space\), then we have a square n x n matrix J with which can we do standard things like compute the determinant, take the eigendecomposition or \(in some cases invert\).
+
+In many cases, we have a very simple Jacobian: just one single row. This applies in cases where we have a scalar function y = f\(x\), where y \(i.e. a one dimensional output from an n dimensional input\). This is the situation we have with a loss function L\(θ\) is a scalar function of a vector input. In this case, we have a single row Jacobian: the gradient vector.
+
+### Gradient vector: one row of the Jacobian
+
+* ∇ f\(x\) is the *gradient vector* of a \(scalar\) function of a vector, the equivalent of the first derivative for vector functions. We have one \(partial\) derivative per component of x. This tells us how much f\(x\) would vary if we made tiny changes to each dimension *independently*. Note that in this course we only deal with function f\(x\) with scalar outputs, but with vector inputs. We will work with scalar objective functions L\(θ\) of parameter vectors θ.
+
+∇ L\(θ\) is a vector *which points in the direction of the steepest change in L\(θ\)*.
+
+### Hessian: Jacobian of the gradient vector
+
+* ∇<sup>2</sup> f\(x\) is the *Hessian matrix* of a \(scalar\) function of a vector, the equivalent of the second derivative for vector functions.  
+
+Following our rule above, it's just the Jacobian of a vector valued function, so we know:
+
+* ∇<sup>2</sup> L\(θ\) is matrix valued map n → n x n
+
+This is important, because we can see that the second derivative even of a scalar valued function scales quadratically with the dimension of its input!
+
+\(if the original function was a vector, we'd have a Hessian tensor instead\).
+
+### Differentiable objective functions 
+
+For some objective functions, we can compute the (exact) **derivatives** of the  objective function with respect to the parameters θ. For example, if the objective function has a single scalar parameter θ ∈ 1 dim and the function is:  
+L\(θ\) = θ<sup>2</sup>
+then, from basic calculus, the derivative with respect to θ is just:  
+L'\(θ)\ = 2θ
+
+If we know the derivative, we can use this to move in "good directions" -- down the slope of the objective function towards a minimum.
+
+This becomes slightly more involved for multidimensional objective functions \(where θ has more than one component\) where we have a **gradient vector** instead of a simple scalar derivative \(written ∇ L\(θ\)\). However, the same principle applies.
+
+#### Orders: zeroth, first, second
+
+Iterative algorithms can be classified according to the order of derivative they require:
+* a **zeroth order**  optimisation algorithm only requires evaluation of the objective function L\(θ\). Examples include random search and simulated annealing.
+
+* a **first order**  optimisation algorithm requires evaluation of L\(θ\) and its derivative ∇ L\(θ\). This class includes the family of **gradient descent** methods.
+
+* a **second order** optimisation algorithm requires evaluation L\(θ\), ∇ L\(θ\) and ∇ ∇ L\(θ\)$. These methods include **quasi\-Newtonian** optimisation.
+
+
+### Optimisation with derivatives
+
+If we know \(or can compute\) the **gradient** an objective function, we know the **slope** of the function at any given point. This gives us both:  
+* the direction of fastest increase and
+* the steepness of that slope. 
+
+This is  *the* major application of calculus. 
+
+Knowing the derivative of the objective function is sufficient to dramatically improve the efficiency of optimisation. 
+
+### Conditions
+
+### Differentiability
+
+A **smooth function** has continuous derivatives up to some order. Smoother functions are typically easier to do iterative optimisation on, because small changes in the current approximation are likely to lead to small changes in the objective function. We say a function is *C<sup>n</sup> continuous* if the nth derivative is continuous.
+
+There is a difference between *having continuous derivatives* and *knowing what those derivatives are*. 
+
+First order optimisation uses the \(first\) **derivatives of the objective function with respect to the parameters**. These techniques can only be applied if the objective function is:
+* At least *C<sup>1</sup> continuous* i.e. no step changes anywhere in the function or its derivative
+* **differentiable** i.e. gradient is defined everywhere
+
+\(though we will see that these constraints can be relaxed a bit in practice\).
+
+Many objective functions satisfy these conditions, and first\-order methods can be vastly more efficient than zeroth\-order methods. For particular classes of functions \(e.g. convex\) there are known bounds on number of steps required to converge for specific first\-order optimizers.
+
+### Lipschitz continuity \(no ankle breaking\)
+
+First\-order \(and higher\-order\) continuous optimisation algorithms put a stronger requirement on functions than just $C^1$ continuity and require the function to be **Lipschitz continuous**.
+
+For functions n → 1 dim \(i.e. the objective functions L\(θ\) we are concerned with\), this is equivalent to saying that the *gradient is bounded* and the function cannot change more quickly than some constant; there is a maximum steepness.  L(θ)/di ≤ K for all i and some fixed K.
+
+### Lipschitz constant
+
+We can imagine running a cone of a particular steepness across a surface. We can check if it ever touches the surface. This is a measure of how steep the function is; or equivalently the bound of the first derivative. The **Lipschitz constant** K of a function f\(x\) is a measure of wide this cone that only touches the function once is. This is a measure of how smooth the function is, or equivalently the maximum steepness of the objective function at any point anywhere over its domain. It can be defined as:
+
+K = sup \[\|f\(x\)\-f\(y\)\| / \|x\-y\|\]
+
+where sup is the supremum; the smallest value that is larger than every value of this function.
+
+A smaller K means a function that is smoother. K=0 is totally flat. We will assume that the functions we will deal with have some finite K, though its value may not be precisely known.
+
+### Analytical derivatives
+
+If we have **analytical derivatives** \(i.e. we know the derivative of the function in closed form; we can write down the maths directly\), you will probably remember the "high school" process for mathematical optimisation:
+* compute the derivative f'\(x\) = d/dx of f(x)
+* solve for the derivative being zero \(i.e. solve x for f'\(x\)=0\). This finds all **turning points** or **optima** of the function.
+* then check if any of the solutions has positive second derivative f'''\(x\)\>0, which indicates the solution is a minimum.
+
+### Computable exact derivatives
+
+The analytical derivative approach doesn't require any iteration at all. We get the solution immediately on solving for the derivative. But usually we don't have a simple solution for the derivative, but we can evaluate the derivative *at a specific point*; we have **exact pointwise derivatives**. We can evaluate the function f'\(x\) for any x but not write it down in closed form. In this case, we can still dramatically accelerate optimisation by taking steps such that we "run downhill" as fast as possible. This requires that we can compute the gradient at any point on the objective function. 
+
+### Gradient: A derivative vector
+
+We will work with objective functions that take in a vector and output a scalar:
+
+```
+    # vector -> scalar
+    def objective(theta): 
+        ...
+        return score
+```
+
+We want to be able to *generate* functions:
+
+``` 
+    # vector -> vector
+    def grad_objective(theta):
+        ...
+    return score_gradient
+```    
+This vector ∇ L\(θ\) is called the **gradient** or **gradient vector**. At any given point, the gradient of a function points in the direction where the function *increases fastest*. The magnitude of this vector is the rate at which the function is changing \("the steepness"\).
+
+### Gradient descent
+
+The basic first-order algorithm is called **gradient descent** and it is very simple, starting from some initial guess θ<sup>\(0\)</sup>:
+    
+θ<sup>\(i\+1\)</sup> = θ<sup>\(i\)</sup> \- δ ∇ L\(θ<sup>\(i\)</sup>\)      
+
+where δ is a scaling hyperparameter -- the **step size**. The **step size** might be fixed, or might be chosen adaptively according to an algorithm like *line search*.
+
+This means is that the optimiser will make moves where the objective function drops most quickly.
+
+In simpler terms:
+
+* starting somewhere θ<sup>\(0\)</sup>
+* repeat:
+    * check how steep the ground is in each direction v = ∇ L\(θ<sup>\(i\)</sup>\)
+    * move a little step δ in the steepest direction v to find θ<sup>\(i\+1\)</sup>.
+
+Notation note: θ<sup>\(i\)</sup> does not mean the ith power of θ but just the ith θ in a sequence of iterations: θ<sup>\(0\)</sup>, θ<sup>\(1\)</sup>, θ<sup>\(2\)</sup>, ...
+
+### Downhill is not always the shortest route
+
+While gradient descent *can* be very fast, following the gradient is not necessarily the fastest route to a minimum. In the example below, the route from the red point to the minimum is very short. Following the gradient, however, takes a very circuitous path to the minimum.
+
+It is generally much faster than blindly bouncing around hoping to get to the bottom, though!
+
+### Why step size matters
+
+The step size ∇ is critical for success. If it is too small, the steps will be very small and convergence will be slow. If the steps are too large, the behaviour of the optimisation can become quite unpredictable. This happens if the gradient functions changes significantly over the space of a step \(e.g. if the gradient changes sign across the step\).
+
+### Relationship to Lipschitz constant
+
+We won't show this, but the optimal step size δ is directly related to the Lipschitz constant K of the objective function. Unfortunately we rarely know K precisely in many real\-world optimisation tasks, and step size is often set by approximate methods like line search.
+
+### Gradient descent in 2D
+
+This technique extends to any number of dimensions, as long as we can get the gradient vector at any point in the parameter space. We just have a gradient vector ∇ L\(θ\) instead of a simple 1D derivative. There is no change to the code.
+
+### Gradients of the objective function
+
+For first\-order optimisation to be possible, the derivative of the objective function has to be available. This obviously does not apply directly to empirical optimisation \(e.g. real world manufacturing where the quality of components is being tested in an experiment -- there are no derivatives\), but it can be applied in many cases where we have a computational model that can be optimised. This is again a reason to favour building models when optimising.
+
+### Why not use numerical differences?
+The definition of differentiation of a function f\(x\) is the well known formula:
+
+d/dx of f\(x\) = lim \[f\(x\+h\) \- f\(x\-h\)/2h\] for h to θ
+
+Given this definition, why do we need to know the *true derivative* ∇ L\(θ\) if we can evaluate L\(θ\) anywhere? Why not just evaluate L\(θ\+h\) and L\(θ\-h\) for some small h? This approach is called numerical differentiation, and these are **finite differences**. 
+
+This works fine for reasonably smooth one\-dimensional functions.
+
+### Numerical problems
+
+It is also difficult to choose h such that the function is not misrepresented by an excessive value but numerical issues do not dominate the result. Remember that finite differences violates *all* of the rules for good floating point results:
+f\(x\+h\) \- f\(x\-h\)/2h
+
+* \(a\) it adds a small number h to a potentially much larger number x *\(magnitude error\)*
+* \(b\) it then subtracts two very similar numbers f\(x\+h\) and f\(x\-h\)  *\(cancellation error\)*
+* \(c\) then it divides the result by a very small number 2h *\(division magnification\)*
+
+It would be hard to think of a simple example that has more potential numerical problems than finite differences!
+
+### Revenge of the curse of dimensionality
+
+This is not useful in high dimensions, even if we can deal with numerical issues, however. The **curse of dimensionality** strikes once again. To evaluate the *gradient* at a point x we need to compute the numerical differences in *each* dimension x<sub>i</sub>. If θ has one million dimensions, then *each* individual derivative evaluation will require two million evaluations of L\(θ\)! This is a completely unreasonable overhead. The acceleration of first\-order methods over zeroth\-order would be drowned out by the evaluation of the gradient.
+
+### Improving gradient descent
+
+Gradient descent can be very efficient, and often **much** better than zeroth\-order methods. However, it has drawbacks:
+
+* The gradient of the loss function L'\(θ\) = ∇ L\(θ\) must be computable at any point θ. **Automatic differentation** helps with this.
+
+* Gradient descent can get stuck in local minima. This is an inherent aspect of gradient descent methods, which will not find global minima except when the the function is convex *and* the step size is optimal. **Random restart** and **momentum** are approachs to reduce sensitivity to local minima.
+* Gradient descent only works on smooth, differentiable objective functions. **Stochastic relaxation** introduces randomness to allow very steep functions to be optimised.
+* Gradient descent can be very slow if the objective function \(and/or the gradient\) is slow to evaluate. **Stochastic gradient descent** can massively accelerate optimisation if the objective function can be written as a simple sum of many subproblems.
+
+### Automatic differentiation
+
+This problem can be solved if we know analytically the derivative of the objective function in closed form. For example, the derivative of the least squares linear regression that we saw in the last lecture is \(relatively\) easy to work out exactly as a formula. However, it seems very constraining to have to manually work out the derivative of the objective function, which might be very complicated indeed for a complex multidimensional problem. This is the major motivation for **algorithmic differentiation** \(or **automatic differentiation**\).
+
+Automatic differentiation can take a function, usually written a *subset* of a full programming language, and automatically construct a function that evaluates the exact derivative at any given point. This makes it feasible to perform first\-order optimisation.
+
+### Autograd
+
+*autograd* has now evolved into **Google JAX**, probably the most promising machine learning library. JAX supports GPU and TPU computation with automatic differentation. 
+
+### Derivative tricks
+
+\[*Side note: if you have the gradient of a function, you can do nifty things like computing the light that would be reflected from the surface, given a fixed light source. This isn't directly important for DF\(H\), but shows how useful being able to differentiate functions is*\]
+
+### Using autograd in optimisation
+
+Using automatic differentiation, we can write down the form of the objective function as a straightforward computation, and get the derivatives of the function "for free". This makes it extremely efficient to perform first\-order optimisation. 
+
+This is what machine learning libraries do. They just make it easy to write vectorised, differentiable code that runs on GPU/TPU hardware. The rest is just dressing.
+
+### Fitting a line, first\-order
+
+Let's re\-solve the line of best fit from lecture 6. We want to find m and c; the parameters of a line, such that the square difference between the line and a set of datapoints is minimised \(the objective function\).
+
+### Limits of automatic differentiation
+
+Obviously, differentiation is only available for functions that are differentiable.  While first\-order gradient vectors are often computable in reasonable time, as we'll see later it becomes very difficult to compute second derivatives of multidimensional functions. 
+
+### Stochastic relaxation
+
+How do animals evolve camouflage? This question is posed and discussed in **"The Blind Watchmaker"** by *Richard Dawkins*. Evolution is a gradual optimisation process, and to make steps that might be accepted requires that there is a smooth path from "poor fitness" to "good fitness".
+
+### Resolution
+
+The argument is that although every *specific* case is a simple binary choice, it is *averaged* over many random instances, where the conditions will be slightly different \(maybe it is nearly dark, maybe the predator has bad eyes, maybe the weather is foggy\) and averaging over all of those cases, some very minor change in colouring might offer an advantage. Mathematically speaking, this is **stochastic relaxation**; the apparently impossibly steep gradient has been rendered \(approximately\) Lipschitz continuous by integrating over many different random conditions.
+
+This is applicable to many problems outside of evolution. For example, a very steep function has a very large derivative at some point; or it might have zero derivative in parts. But if we average over lots of cases where the step position is very slightly shifted, we get a smooth function.
+
+
+### Stochastic gradient descent
+
+Gradient descent evaluates the objective function and its gradient at each iteration before making a step. This can be very expensive to do, particularly when optimising function approximations with large data sets (e.g. in machine learning). 
+
+If the objective function can be broken down into small parts, the optimiser can do gradient descent on randomly selected parts independently, which may be much faster. This is called **stochastic gradient descent \(SGD\)**, because the steps it takes depend on the random selection of the parts of the objective function. 
+
+This works if the objective function can be written as a sum:
+
+L\(θ\) = ∑ L<sub>i</sub>\(θ\)
+
+i.e. that the objective function is composed of the sum of many simple sub-objective functions L<sub>1</sub>\(θ\), L<sub>2</sub>\(θ\), ..., L<sub>n</sub>\(θ\).
+
+This type of form often occurs when matching parameters to observations -- **approximation problems**, as in machine learning applications. In these cases, we have many **training examples** x<sub>i</sub> with matching known outputs y<sub>i</sub>, and we want find a parameter vector θ such that:
+
+L\(θ\) = \∑ \|\|f\(xi;θ\) \- y<sub>i</sup> \|\|
+
+is minimised, i.e. that the difference between the model output and the expected output is minimised, *summing over all training examples*. 
+
+Differentiation is a linear operator. This means that we can interchange summation, scalar multiplication and differentiation 
+d/dx\(a f\(x\) \+ b g\(x\)\) = a d/dx of f\(x\) + b d/dx of g\(x\), we have:
+
+∇ \∑ \|\|f\(xi;θ\) \- y<sub>i</sup> \|\| = ∑ ∇ \|\|f\(xi;θ\) \- y<sub>i</sup> \|\|
+
+In this case, we can take any *subset* of training samples and outputs, compute the gradient for each sample, then make a move according to the computed gradient of the subset. Over time, the random subset selection will \(hopefully\) average out. Each subset is called a **minibatch** and one run through the whole dataset \(i.e. enough minibatches so that every data item has been "seen" by the optimiser\) is called an **epoch**.
+
+### Linear regression with SGD
+
+We can do our linear regression example with 10000 points - and find a good fit with *only one pass through the data*. This works because we can divide the problem up into a lots of sums of smaller problems \(fitting a line on a few random points at a time\) which are all part of one big problem \(fitting a line to all of the points\). 
+
+When this is possible, it is vastly more efficient than computing the gradient for the entire set of data we have available.
+
+### Random restart
+
+Gradient descent gets trapped in minima easily. Once it is in an **attractor basin** of a **local minima** it can't easily get out. SGD can add a little bit of noise that might push the optimiser over small ridges and peaks, but not out of deep minima. A simple heuristic is just to run gradient descent until it gets stuck, then randomly restart with different initial conditions and try again. This is repeated a number of times, hopefully with one of the optimisation paths ending up in the global minimum. This metaheuristic works for any local search method, including hill climbing, simulated annealling, etc.
+
+### Simple memory: momentum terms
+
+A physical ball rolling on a surface is not stopped by a small irregularity in a surface. Once it starts rolling downhill, it can skip over little bumps and divots, and cross flat plains, and head steadily down narrow valleys without bouncing off the edges. This is because it has **momentum**; it will tend to keep going in the direction it was just going. This is a form of the memory metaheuristic. Rather than having ant-colony style paths everywhere, the optimiser just remembers one simple path -- the way it is currently going.
+
+The same idea can be used to reduce the chance of \(stochastic\) gradient descent becoming trapped by small fluctuations in the objective function and "smooth" out the descent. The idea is simple; if you are going the right way now, keep going that way even if the gradient is not always quite downhill.
+
+We introduce a velocity v, and have the optimiser move in this direction. We gradually adjust v to align with the derivative.
+
+v = α v \+ δ ∇ L\(θ\)  
+θ<sup>\(i\+1\)</sup> = θ<sup>\(i\)</sup> \- v
+
+
+This is governed by a parameter α; the closer to α is to 1.0 the more momentum there is in the system. α=0.0 is equivalent to ordinary gradient descent.
+
+### Types of critical points
+
+This physical surface intuition leads us to think of how we would characterise different parts of an objective function. 
+
+For smooth, continuous objective functions, there are various points in space of particular interest. These are **critical points**, where the gradient vector components is the zero vector.
+
+### Second\-order derivatives
+
+If the first order derivatives represent the "slope" of a function, the second order derivatives represent the "curvature" of a function.
+
+For every parameter component θ<sub>i</sub> the Hessian stores how the *steepness* of every other θ<sub>j</sub> changes.
+
+### Eigenvalues of the Hessian
+
+The Hessian matrix captures important properties about the **type of critical point** that we saw in the previous lecture. In particular, the **eigenvalues** of the Hessian tell us what kind of point we have.
+
+* If all eigenvalues are all strictly positive, the matrix is called **positive definite** and the point is a minimum.
+* If all eigenvalues are all strictly negative \(**negative definite**\) and the point is a maximum.
+* If eigenvalues have mixed sign the point is a saddle point.
+* If the eigenvalues are all positive/negative, but with some zeros, the matrix is **semidefinite** and the point is plateau/ridge.
+
+### Second\-order optimsation
+
+Second\-order optimisation uses the Hessian matrix to jump to the bottom of each local quadratic approximation in a single step.  This can skip over flat plains and escape from saddle points that slow down gradient descent. Second\-order methods are *much* faster in general than first\-order methods. 
+
+#### Curse of dimensionality \(yet again\)
+
+However, simple second order methods don't work in high dimensions. Evaluating the Hessian matrix requires d<sup>2</sup> computations, and d<sup>2</sup> storage. Many machine learning applications have models with d \> 1 million parameters. Just storing the Hessian matrix for *one iteration* of the optimisation would require:
+
+
+
+
 
