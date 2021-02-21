@@ -258,7 +258,7 @@ It works for multidimensional arrays as well, given nested sequences.
 
 This is important, because NumPy arrays are **mutable**, and if several variables refer to the **same** array, the effects might not be what you expect
 
-_We need to explicitly copy arrays if we want to work on a new array_
+_We need to explicitly copy arrays if we want to work on a new array<sub>
 
 
 ### Blank arrays
@@ -907,7 +907,7 @@ Note that many operations can now be defined that just ignore the strides. For e
       // some pseudo code
       if(same_shape(x,y))
       {
-          z = zero_array_like(x);
+          z = zero_array<sub>like(x);
           for(i=0;i<x->n_items;i++)          
                 z->data[i] = x->data[i] + y->data[i];        
           return z;
@@ -1111,7 +1111,7 @@ One layer represents the data with **line geoms**, the second represents the sam
 
 #### Ribbon plots
 
-If we have a triplet of vector $\vec{x},\vec{y_2},\vec{y_1}$, where both $y$s match the $x$ then the area between the two lines can be drawn using polygon **geoms**. This results in a **ribbon plot**, where the ribbon can have variable thickness \(as the difference $y_1-y_2$ varies\).
+If we have a triplet of vector $\vec{x},\vec{y<sub>2},\vec{y<sub>1}$, where both $y$s match the $x$ then the area between the two lines can be drawn using polygon **geoms**. This results in a **ribbon plot**, where the ribbon can have variable thickness \(as the difference $y<sub>1-y<sub>2$ varies\).
 
 This can be also be thought of a line geom with variable width along the $x$ axis.
 
@@ -1154,7 +1154,7 @@ A **stat** is a statistic of a **Dataset** \(i.e. a function of the data\). Stat
 * **binning operations**, which categorise data into a number of discrete **bins** and count the data points falling into those bins
 * **smoothing and regression**, which find approximating functions to datasets, like linear regression which fits a line through data
 
-Plots of a single 1D array of numbers $[x_1, x_2, \dots, x_n]$ usually involve displaying *statistics* \(**stats**\)  to transform the dataset into forms that 2D plotting forms can be applied to. Very often these plot types are used with multiple arrays \(data that has been grouped in some way\) to show differences between the groups.
+Plots of a single 1D array of numbers $[x<sub>1, x<sub>2, \dots, x<sub>n]$ usually involve displaying *statistics* \(**stats**\)  to transform the dataset into forms that 2D plotting forms can be applied to. Very often these plot types are used with multiple arrays \(data that has been grouped in some way\) to show differences between the groups.
 
 #### Binning operations
 
@@ -1312,7 +1312,7 @@ Note that log scales have one downside: the log of a negative number is undefine
 
 ### Polar
 
-Cartesian plots are the most familiar coords. But some data is naturally represented in different mappings. The most notable of these is **polar coordinates**, in which two values are mapped onto an *angle* $\theta$ and a *radius* $r$. 
+Cartesian plots are the most familiar coords. But some data is naturally represented in different mappings. The most notable of these is **polar coordinates**, in which two values are mapped onto an *angle* $θ$ and a *radius* $r$. 
 
 This most widely used for data that originated from an angular measurement, but it can be used any time it makes sense for one of the axes to "wrap around" smoothly. The classic example is *radar data* obtained from a spinning dish, giving the reflection distance at each angle of the dish rotation. Similarly, wind data from weather stations typically records the direction and speed of the strongest gusts.
 
@@ -1369,7 +1369,7 @@ An alternative is simply to jitter the points on the x\-axis slightly.
 ## Week 4
 
 ### Vector spaces
-In this course, we will consider vectors to be ordered tuples of real numbers $[x_1, x_2, \dots x_n], x_i \in \mathbb{R}$ (the concept generalises to complex numbers, finite fields, etc. but we'll ignore that). A vector has a fixed dimension $n$, which is the length of the tuple. We can imagine each element of the vector as representing a distance in an **direction orthogonal** to all the other elements.
+In this course, we will consider vectors to be ordered tuples of real numbers $[x<sub>1, x<sub>2, \dots x<sub>n], x<sub>i \in \mathbb{R}$ (the concept generalises to complex numbers, finite fields, etc. but we'll ignore that). A vector has a fixed dimension $n$, which is the length of the tuple. We can imagine each element of the vector as representing a distance in an **direction orthogonal** to all the other elements.
 
 For example, a length-3 vector might be used to represent a spatial position in Cartesian coordinates, with three orthogonal measurements for each vector. Orthogonal just means "independent", or, geometrically speaking "at 90 degrees".
 
@@ -1384,8 +1384,8 @@ Each of these vectors [1,0,0], [0,1,0], [0,0,1] is pointing in a independent dir
 can be thought of a weighted sum of these orthogonal unit vectors (called **"basis vectors"**). The vector space has three independent bases, and so is three dimensional.
 
 We write vectors with a bold lower case letter:
-$$\vec{x} = [x_1, x_2, \dots, x_d],\\
-\vec{y} = [y_1, y_2, \dots, y_d],$$ and so on.
+$$\vec{x} = [x<sub>1, x<sub>2, \dots, x<sub>d],\\
+\vec{y} = [y<sub>1, y<sub>2, \dots, y<sub>d],$$ and so on.
 
 #### Points in space
 
@@ -1401,16 +1401,16 @@ $$\vec{x} = [x_1, x_2, \dots, x_d],\\
 ##### Vector spaces
 
 Any vector of given dimension $n$ lies in a **vector space**, called $\real^n$ (we will only deal with finite-dimensional real vector spaces with standard bases), which is the set of possible vectors of length $n$ having real elements, along with the operations of:   
-*  **scalar multiplication** so that $a{\bf x}$  is defined for any scalar $a$. For real vectors, $a{\bf x} = [a x_1, a x_2, \dots a x_n]$, elementwise scaling.
+*  **scalar multiplication** so that $a{\bf x}$  is defined for any scalar $a$. For real vectors, $a{\bf x} = [a x<sub>1, a x<sub>2, \dots a x<sub>n]$, elementwise scaling.
     * $(\real, \real^n) \rightarrow \real^n$
-* **vector addition** so that ${\bf x} + {\bf y}$ vectors ${\bf x, y}$ of equal dimension. For real vectors, ${\bf x} + {\bf y} = [x_1 + y_1, x_2 + y_2, \dots x_d + y_d]$ the elementwise sum
+* **vector addition** so that ${\bf x} + {\bf y}$ vectors ${\bf x, y}$ of equal dimension. For real vectors, ${\bf x} + {\bf y} = [x<sub>1 + y<sub>1, x<sub>2 + y<sub>2, \dots x<sub>d + y<sub>d]$ the elementwise sum
     * $(\real^n, \real^n) \rightarrow \real^n$
 
 
 We will consider vector spaces which are equipped with two additional operations:  
 * a **norm** $||{\bf x}||$ which allows the length of vectors to be measured.
     * $\real_n \rightarrow \real_{\geq 0}$
-* an **inner product** $\langle {\bf x} | {\bf y} \rangle$ or ${\bf x \bullet y}$  which allows the angles of two vectors to be compared. The inner product of two orthogonal vectors is 0. For real vectors ${\bf x}\bullet{\bf y} = x_1 y_1 + x_2 y_2 + x_3 y_3 \dots x_d y_d$
+* an **inner product** $\langle {\bf x} | {\bf y} \rangle$ or ${\bf x \bullet y}$  which allows the angles of two vectors to be compared. The inner product of two orthogonal vectors is 0. For real vectors ${\bf x}\bullet{\bf y} = x<sub>1 y<sub>1 + x<sub>2 y<sub>2 + x<sub>3 y<sub>3 \dots x<sub>d y<sub>d$
     * $(\real^n, \real^n) \rightarrow \real$
 
 All operations between vectors are defined within a vector space. We cannot, for example, add two vectors of different dimension, as they are elements of different spaces.
@@ -1490,7 +1490,7 @@ The **feature vectors** are simply an encoding of the data in vector space, whic
 
 *Most machine learning algorithms can be seen as doing geometric operations: comparing distances, warping space, computing angles, and so on.*
 
-One of the simplest effective machine learning algorithms is **k nearest neighbours**. This involves some *training set* of data, which consists of pairs $\vec{x_i}, y_i$: a feature vector $\vec{x_i}$ and a label $y_i$. 
+One of the simplest effective machine learning algorithms is **k nearest neighbours**. This involves some *training set* of data, which consists of pairs $\vec{x<sub>i}, y<sub>i$: a feature vector $\vec{x<sub>i}$ and a label $y<sub>i$. 
 
 When a new feature needs classified to make a prediction, the $k$ *nearest* vectors in this training set are computed, using a **norm** to compute distances. The output prediction is the class label that occurs most times among these $k$ neighbours \($k$ is preset in some way; for many problems it might be around 3\-12\).
 
@@ -1502,7 +1502,7 @@ Images have a straightforward representation as 2D arrays of brightness, as we h
 
 Groups of pixels -- for example, rectangular patches -- can be unraveled into a vector. An 8x8 image patch would be unraveled to a 64\-dimensional vector. These vectors can be treated as elements of a vector space.
 
-Many image compression algorithms take advantage of this view. One common approach involves splitting images into patches, and treating each patch as a vector $\vec{x_1}, \dots, \vec{x_n}$. The vectors are **clustered** to find a small number of vectors $\vec{y_1}, \dots, \vec{y_m},\ m << n$ that are a reasonable approximation of nearby vectors. Instead of storing the whole image, the vectors for the small number of representative vectors $\vec{y_i}$ are stored \(the **codebook**\), and the rest of the image is represented as the *indices* of the "closest" matching vector in the codebook i.e. the vector $\vec{y_j}$ that minimises $||x_i - y_j||$. 
+Many image compression algorithms take advantage of this view. One common approach involves splitting images into patches, and treating each patch as a vector $\vec{x<sub>1}, \dots, \vec{x<sub>n}$. The vectors are **clustered** to find a small number of vectors $\vec{y<sub>1}, \dots, \vec{y<sub>m},\ m << n$ that are a reasonable approximation of nearby vectors. Instead of storing the whole image, the vectors for the small number of representative vectors $\vec{y<sub>i}$ are stored \(the **codebook**\), and the rest of the image is represented as the *indices* of the "closest" matching vector in the codebook i.e. the vector $\vec{y<sub>j}$ that minimises $||x<sub>i - y<sub>j||$. 
 
 This is **vector quantisation**, so called because it quantises the vector space into a small number of discrete regions. This process maps **visual similarity onto spatial relationships.**
 
@@ -1513,7 +1513,7 @@ There are several standard operations defined for vectors, including getting the
 #### Addition and multiplication
 
 Elementwise addition and scalar multiplication on arrays already implement the mathematical vector operations. Note that these ideas let us form **weighted sums** of vectors:  
-$$\lambda_1 \vec{x_1} + \lambda_2 \vec{x_2} + \dots + \lambda_n \vec {x_n}$$
+$$\lambda_1 \vec{x<sub>1} + \lambda_2 \vec{x<sub>2} + \dots + \lambda_n \vec {x<sub>n}$$
 
 This applies **only** to vectors of the same dimension.
 
@@ -1523,7 +1523,7 @@ Vector spaces do not necessarily have a concept of distance, but the spaces we w
 
 The Euclidean length of a vector $\bf x$ (written as $||{\bf x}||$) can be computed directly using `np.linalg.norm()`. This is equal to:
 
-$$ \|{\bf x}\|\_2 = \sqrt{x_0^2 + x_1^2 + x_2^2 + \dots + x_n^2  } $$
+$$ \|{\bf x}\|\_2 = \sqrt{x<sub>0^2 + x<sub>1^2 + x<sub>2^2 + \dots + x<sub>n^2  } $$
 
 and corresponds to the radius of a \(hyper\)sphere that would just touch the position specified by the vector.
 
@@ -1562,7 +1562,7 @@ Given our straightforward definition of vectors, we can define some  **statistic
 
 The **mean vector** of a collection of $N$ vectors is the sum of the vectors multiplied by $\frac{1}{N}$:
 
-$$\text{mean}(\vec{x_1}, \vec{x_2}, \dots, \vec{x_n}) = \frac{1}{N} \sum_i \vec{x_i}$$
+$$\text{mean}(\vec{x<sub>1}, \vec{x<sub>2}, \dots, \vec{x<sub>n}) = \frac{1}{N} ∑ \vec{x<sub>i}$$
 
 The mean vector is the **geometric centroid** of a set of vectors and can be thought of as capturing "centre of mass" of those vectors. 
 
@@ -1732,7 +1732,7 @@ If $A$ is $\real^{n \times m}$, and $\vec{x}$ is $\real^m$, then this will map f
 
 **All application of a matrix to a vector does is form a weighted sum of the elements of the vector**. This is a linear combination \(equivalent to a "weighted sum"\) of the components.
 
-In particular, we take each element of $\vec{x}, x_1, x_2, \dots, x_m$, multiply it with the corresponding *column* of $A$, and sum these columns together.
+In particular, we take each element of $\vec{x}, x<sub>1, x<sub>2, \dots, x<sub>m$, multiply it with the corresponding *column* of $A$, and sum these columns together.
 
 ### Matrix multiplication
 
@@ -1861,13 +1861,13 @@ $$
 
 These represent particularly simple to solve sets of simultaneous equations. For example, the lower triangular matrix above can be seen as the system of equations:
 
-$$x_1 = y_1\\
-2x_1 + 3x_2 = y_2\\ 
-4x_1 + 5x_2 + 6x_3 = y_3\\ 
-7x_1 + 8x_2 + 9x_3 + 10x_4 = y_4\\ 
+$$x<sub>1 = y<sub>1\\
+2x<sub>1 + 3x<sub>2 = y<sub>2\\ 
+4x<sub>1 + 5x<sub>2 + 6x<sub>3 = y<sub>3\\ 
+7x<sub>1 + 8x<sub>2 + 9x<sub>3 + 10x<sub>4 = y<sub>4\\ 
 $$
 
-which, for a given $y_1, y_2, y_3, y_4$ is trivial to solve by substitution.
+which, for a given $y<sub>1, y<sub>2, y<sub>3, y<sub>4$ is trivial to solve by substitution.
 
 ## Week 5
 
@@ -2003,7 +2003,7 @@ where Q is a matrix of unit eigenvectors x<sub>i</sub> (same as the output `np.l
 
 ### Approximating a matrix
 
-Imagine we started with a very high dimensional data set, so $\Sigma$ is a very large matrix. It's so large, we don't want to store it in memory. Instead, we just want to store the first few principal components and use these to reconstruct an *approximation* to Σ. Providing we keep the largest principal components, we will probably retain most of the information. 
+Imagine we started with a very high dimensional data set, so $σ$ is a very large matrix. It's so large, we don't want to store it in memory. Instead, we just want to store the first few principal components and use these to reconstruct an *approximation* to Σ. Providing we keep the largest principal components, we will probably retain most of the information. 
 
 
 Matrix approximation can be used to simplify transformations or to compress matrices for data transmission.
@@ -2475,7 +2475,7 @@ A **convex constraint** is another simple kind of constraint, where the constrai
 
 Unconstrained optimisation rarely gives useful answers on its own. Consider the example of the airfoil. Increasing lift might be achieved by making the airfoil length longer and longer. At some point, this might become physically impossible to build.
 
-Although we often represent $\theta$ as being in $\real^N$, the feasible set is typically not the entire vector space. There are two approaches to deal with this:
+Although we often represent $θ$ as being in $\real^N$, the feasible set is typically not the entire vector space. There are two approaches to deal with this:
 
 #### Constrained optimisation
 
@@ -2560,7 +2560,7 @@ Nonconvex problems require the use of **iterative** methods \(although ways of *
 
 #### Continuity
 
-An objective function is **continuous** if for some very small adjustment to $\theta$ there is an *arbitrarily* small change in L\(θ\). This means that there will never be "nasty surprises" if we move slowly enough through the space of θ; no sudden jumps in value.
+An objective function is **continuous** if for some very small adjustment to $θ$ there is an *arbitrarily* small change in L\(θ\). This means that there will never be "nasty surprises" if we move slowly enough through the space of θ; no sudden jumps in value.
 
 If a function is discontinuous, local search methods are not guaranteed to converge to a solution. Optimisation for discontinuous objective functions is typically much harder than for continuous functions. This is because there could be arbitrary changes in the objective function for any adjustment to the parameters.
 
@@ -2601,7 +2601,7 @@ Iterative optimisation algorithm:
 
 **Grid search**, is a straightforward but inefficient optimisation algorithm for multidimensional problems. The parameter space is simply sampled by equally dividing the feasible set in each dimension, usually with a fixed number of divisions per dimension.
 
-The objective function is evaluated at each $\theta$ on this grid, and the lowest loss θ found so far is tracked. This is simple, and can work for 1D optimisation problems. It is sometimes used to optimise *hyperparameters* of machine learning problems where the objective function may be complex but finding the absolute minimum isn't essential.
+The objective function is evaluated at each $θ$ on this grid, and the lowest loss θ found so far is tracked. This is simple, and can work for 1D optimisation problems. It is sometimes used to optimise *hyperparameters* of machine learning problems where the objective function may be complex but finding the absolute minimum isn't essential.
 
 
 ### Revenge of the curse of dimensionality
@@ -3184,6 +3184,791 @@ Second\-order optimisation uses the Hessian matrix to jump to the bottom of each
 
 However, simple second order methods don't work in high dimensions. Evaluating the Hessian matrix requires d<sup>2</sup> computations, and d<sup>2</sup> storage. Many machine learning applications have models with d \> 1 million parameters. Just storing the Hessian matrix for *one iteration* of the optimisation would require:
 
+## Week 8
+
+### What is probability?
+
+* **Experiment** \(or **trial**\) An occurrence with an uncertain outcome.
+    * For example, losing a submarine -- the location of the submarine is now unknown.
+* **Outcome** The result of an experiment; one particular state of the world. 
+    * For example: the submarine is in ocean grid square \[2,3\].
+* **Sample Space** The set of *all possible* outcomes for an experiment. 
+    * For example, ocean grid squares \{\[0,0\], \[0,1\], \[0,2\], \[0,3\], ..., \[8,7\], \[8,8\], \[8,9\], \[9,9\]\}.
+* **Event** A *subset* of possible outcomes with some common property. 
+    * For example, the grid squares which are south of the Equator.
+* **Probability** The probability of an event *with respect to a sample space* is the number of outcomes from the sample space that are in the event, divided by the total number of outcomes in the sample space. Since it is a ratio, probability will always be a real number between 0 \(representing an impossible event\) and 1 \(representing a certain event\).  
+    * For example, the probability of the submarine being below the equator, or the probability of the submarine being in grid square \[0,0\] \(in this case the event is just a single outcome\).
+* **Probability distribution** A mapping of outcomes to probabilities that sum to 1. This is because an outcome must happen from a trial (with probability 1) so the sum of all possible outcomes together will be 1. A random variable has a probability distribution which maps each outcome to a probability.
+    * For example P\(X=x\), the probability that the submarine is in a specific grid square x.
+* **Random variable** A variable representing an unknown value, whose probability distribution we *do* know. The variable is associated outcomes of a trial    
+    * For example, X is a random variable representing the location of the submarine. 
+* **Probability density/mass function** A function that *defines* a probability distribution by mapping each outcome to a probability f<sub>X</sub>\(x\), x → 1 dim. This could be a continuous function over x \(density\) or discrete function over x \(mass\).
+    * For example f<sub>X</sub>\(x\) would be a probability mass function for the submarine, which maps each grid square to real number representing its probability.
+* **Observation** An outcome that we have directly observed; i.e. data.
+    * For example, a submarine was found in grid square \[0,5\]
+* **Sample** An outcome that we have simulated according a probability distribution. We say we have **drawn** a sample from a distribution.
+    * For example, if we believe that the submarine was distributed according to some pattern, generate possible concrete grid positions that follow this pattern.
+* **Expectation/expected value** The "average" value of a random variable.
+    * The submarine was on average in grid square \[3.46, 2.19\]
+    
+### Superiority of probabilistic models
+
+Regardless of the philosophical model you subscribe to, there is one thing you can be sure of: *probability is the best*. 
+
+There are other models of uncertainty than probability theory that are sometimes used. However, all other representations of uncertainty are *strictly inferior* to probabilistic methods *in the sense that* a person, agent, computer placing "bets" on future events using probabilistic models has the best possible return out of all decision systems when there is uncertainty. 
+
+> *Any theory with as good a gambling outcome as would be achieved using probability theory is equivalent to probability theory.*
+
+----
+
+### Generative models: forward and inverse probability
+
+A key idea in probabilistic models is that of a **generative process**; the idea that there is some unknown process going on, the results of which can be observed. The process itself is governed by unobserved variables that we do not know but which we can **infer**.
+
+The classic example is an **urn problem**. Consider an urn, into which a number of balls have been poured \(by some mysterious entity, say\). Each ball can be either black or white. 
+
+You pull out four random balls from the urn and observe their colour. You get four white balls. 
+
+There are lots of questions you can ask now:
+
+* What is the probability that the next ball that is drawn will be white? 
+    * This is a **forward probability** question. It asks questions related to the distribution of the observations.
+* What is the distribution of white and black balls in the urn? 
+    * This is an **inverse probability** question. It asks questions related to unobserved variables that govern the process that generated the observations.
+* Who is the mysterious entity?
+    * This is an unknowable question. The observations we make cannot resolve this question.
+    
+There are a huge number of processes that can be framed as urn problems \(urns where balls are replaced, problems where there are multiple urns and you don't know which urn the balls came from, problems where balls can move between urns, and so on\). 
+
+### A formal basis for probability theory
+#### Axioms of probability
+
+There are only a few basic axioms of probability, from which everything else can be derived. Writing P\(A\) to mean the probability of event A \(NOTE: these apply to **events** \(sets of outcomes\), not just outcomes!\):
+    
+* **Boundedness**
+0 ⩽ P\(A\) ⩽ 1  
+ all possible events A -- probabilities are 0, or positive and less than 1.  
+* **Unitarity**
+Σ P\(A\)=1  
+for the complete set of possible **outcomes** \(not events!\) A ∈ σ in a sample space σ -- something always happens.
+* **Sum rule**
+P\(A ∨ B\) = P\(A\) + P\(B\) \- P\(A ∧ B\),
+i.e. the probability of either event A or B happening is the sum of the independent probabilities minus the probability of both happening.  
+* **Conditional probability**
+The conditional probability P\(A\|B\) is defined to be the probability that event A will happen *given that we already know B to have happened*.
+P\(A\|B\) = P\(A ∧ B\) \ P\(B\)
+
+### Random variables and distributions
+
+A **random variable** is a variable that can take on different values, but we do not know what value it has; i.e. one that is "unassigned". However, we have some knowledge which captures the possible states the variable could take on, and their corresponding probabilities. Probability theory allows us to manipulate random variables without having to assign them a specific value.
+
+A random variable is written with a capital letter, like X.
+
+A random variable might represent:
+
+* the outcome of dice throw \(discrete\); 
+* whether or not it is raining outside \(discrete: binary\); 
+* the latitude of the USS Scorpion \(continuous\); 
+* the height of person we haven't met yet \(continuous\). 
+
+### Distributions
+
+A **probability distribution** defines how likely different states of a random variable are. 
+
+We can see X as the the *experiment* and x as the *outcome*, with a function mapping every possible outcome to a probability. We write P\(X=x\) \(note the case!\), and use the shorthand notations:
+
+P\(X=x\), the probability of random variable X taking on value x  
+P\(X\), shorthand for probability of X=x   
+P\(x\), shorthand for probability of specific value X=x   
+
+We can see an outcome as a random variable taking on a specific value i.e. P\(X=x\). Note that by convention we use P\(A\) to mean the probability of **event** A, not a random variable A \(an **event** is a *set* of **outcomes**; **random variables** only assign probabilities to **outcomes**\).
+
+#### Discrete and continuous
+
+Random variables can be continuous \(e.g. the height of a person\) or discrete \(the value showing on the face of a dice\). 
+
+* **Discrete variables** The distribution of a discrete random variable is described with a **probability mass function** \(PMF\) which gives each outcome a specific value; imagine a Python dictionary mapping outcomes to probabilities. The PMF is usually written f<sub>X</sub>\(x\), where P\(X=x\) = f<sub>X</sub>\(x\).
+
+* **Continuous variables** A continuous variable has a **probability density function** \(PDF\) which specifies the spread of the probability over outcomes as a *continuous function* f<sub>X</sub>\(x\). It is **not** the case that P\(X=x\) = f<sub>X</sub>\(x\) for PDFs.
+
+#### Integration to unity
+
+A probability mass function or probability density function *must* sum/integrate to exactly 1, as the random variable under consideration must take on *some* value; this is a consequence of unitarity. Every repetition of an experiment has exactly one outcome.
+
+∑ f<sub>X</sub>\(x<sub>i</sub>\) = 1 for PMFs of discrete RVs
+∫ f<sub>X</sub>\(x\) dx = 1 for PDFs of continuous RVs
+
+# Expectation
+
+If a random variable takes on numerical values, then we can define the **expectation** or **expected value** of a random variable X as:
+
+X = ∫ f<sub>X</sub>\(x\) dx 
+
+For a discrete random variable with probability mass function P\(X=x\) = f<sub>X</sub>\(x\), we would write this as a summation:
+
+X = ∑ f<sub>X</sub>\(x\) x 
+
+If there are only a finite number of possibilities, then this is: X = P\(X=x<sub>1</sub>) x<sub>1</sub> \+ P\(X=x<sub>2</sub>) x<sub>2</sub> \+ ... \+ P\(X=x<sub>n</sub>) x<sub>n</sub>
+
+The expectation is the "average" of a random variable. Informally, it represents what we'd "expect to happen"; the most likely overall "score". It can be thought of as a *weighted sum* of all the possible outcomes of an experiment, where each outcome is weighted by the probability of that outcome occurring.  
+
+### Expectation and means
+
+Expectation corresponds to the idea of a **mean** or **average** result. The expected value of a random variable is the **true average** of the value of all outcomes that would be observed if we ran the experiment an infinite number of times. This is the **population mean** -- the mean of the whole, possibly infinite, population of a random variable.
+
+Many important properties of random variables can be defined in terms of expectation. 
+
+* The mean of a random variable X is just expected X. It is a measure of **central tendency**.
+* The variance of a random variable X is X = \(X - expected X\)<sup>2</sup>. It is a measure of **spread**.
+
+### Expectations of functions of X
+
+We can apply functions to random variables, for example, the square of a random variable.
+
+ The expectation of any function g\(X\) of a continuous random variable $X$ is defined as:  
+expected g\(X\) = ∫ f<sub>X</sub>\(x\) g\(x\) dx
+or  
+expected g\(X\) = ∑ f<sub>X</sub>\(x\) g\(x\) dx  
+for a discrete random variable.
+
+We just take the sum/integral of each outcome, passed through the function g\(x\), weighted by the probability of the outcome x. g\(x\) could be thought of a "scoring" function, which assigns a real number to every outcome of X. Note that g\(x\) has no effect on the probability density/mass function f<sub>X</sub>\(x\). It doesn't affect the probability of the outcomes, just the *value assigned to those outcomes*.
+
+Expected values are essential in making **rational decisions**, the central problem of **decision theory**. They combine scores \(or **utility**\) with uncertainty \(**probability**\).
+
+### Samples and sampling
+
+**Samples** are observed outcomes of an experiment; we will use the term **observations** synonymously, though samples usually refer to simulations and observations to concrete real data. 
+
+We can **sample** from a distribution; this means simulating outcomes according to the probability distribution of those variables. We can also **observe** data which comes from an external source, that might believe is generated by some probability distribution.
+
+### The empirical distribution
+
+For discrete data, we can estimate the probability mass function that might be generating **observations** by 
+counting each outcome seen divided by the total number of trials. This is called the **empirical distribution**.
+
+This can be thought of as the **normalized histogram** of counts of occurrences of outcomes.
+
+### Computing the empirical distribution 
+
+For discrete random variables, we can always compute the empirical distribution from a series of observations; for example from the counts of a specific word  in a *corpus* of text \(e.g. in every newspaper article printed in 1994\). We just count the number of times each word is seen and divide by the total number of words.
+    
+P\(X=x\) = n<sub>x</sub> / N
+
+where n<sub>x</sub> is the number of time outcome x was observed, and N is the total number of trials.
+
+
+Note that the empirical distribution is a distribution which *approximates* an unknown true distribution. For very large samples of discrete variables, the empirical distribution will increasingly closely approximate the **true PMF**, assuming the samples we see are drawn in an unbiased way. However, this approach does not work usefully for continuous random variables, since we will only ever see each observed value once.
+
+### Random sampling procedures
+
+#### Uniform sampling
+
+There are algorithms which can generate continuous random numbers which are **uniformly distributed** in an interval, such as from 0.0 to 1.0. These are actually **pseudo\-random numbers** in practice, since computers are \(hopefully\) deterministic. They designed to approximate the statistical properties of true random sequences. Inherently, all such generators generate sequences of discrete symbols \(bits or integers\) which are then mapped to floating point numbers in a specific range; this is quite tricky to get right.
+
+> We must be careful: computers generate **pseudo\-random floating\-point numbers**; and not **true random real numbers**. While this makes little difference much of the time, they are quite different things.
+
+A **uniformly distributed** number has equal probability of taking on any value in its interval, and zero probability every where else. Although this is sampling from a continuous PDF, it is the key building block in sampling from arbitrary PMFs. A uniform distribution is notated X ∼ U\(a,b\), meaning X is random variable which may take on values between a and b, with equal possibility of any number in that interval. The symbol ∼ is read "distributed as", i.e. "X is distributed as a uniform distribution in the interval \[a,b\]".
+
+> Note that in practice these are not uniform across the reals in a given interval if we are using floating point, because we can only ever sample valid floating point values. While floats are non\-uniformly distributed, the difference isn't important for most applications.
+
+### Writing and manipulation of probabilities 
+
+Probabilities can be used to represent belief. But the raw numbers \(e.g. P\(X=x\) = 0.9999\) are not always a useful to make judgments, communicate results, or in some cases, even to do computations. 
+
+### Odds, log odds
+
+The **odds** of an event with probability $p$ is defined by:
+    
+odds =  1\-p / p
+
+The odds are a more useful unit for discussing unlikely scenarios \(odds of 999:1 is easier to understand than p=0.001\).
+
+**Log\-odds** or **logit** are particularly useful for very unlikely scenarios:
+
+logit\(p\) = log \( p / 1\-p \)
+
+### Log probabilities
+
+The probability of multiple *independent* random variables taking on a set of values can be computed from the product:
+P\(X,Y,Z\) = P\(X\)P\(Y\)P\(Z\)
+and in general
+    
+P\(X<sub>1</sub>=x<sub>i</sub>, ..., X<sub>n</sub>=x<sub>n</sub>\) = product\(P\(X<sub>i</sub>=x<sub>i</sub>\)\) for i in range \(1, n\)
+
+We often have to have to compute such products, but to multiply lots of values <1 leads to numerical issues: we will get floating point underflow. Instead, it is numerically more reliable to manipulate **log probabilities**, which can be summed instead of multiplied:
+
+    
+log \[P\(x<sub>1</sub>, ..., x<sub>n</sub>\)\] = ∑ log\(P\(x<sub>i</sub>\)\) for i in range \(1, n\)
+
+
+This uses the identity log\(AB\) = log\(A\) + log\(B\)
+
+This is simply a numerical convenience which avoids underflow. The **log-likelihood** is just log P\(B\|A\), and is often more convenient to work with than the raw likelihood.
+
+### Comparing log-likelihoods
+
+We could imagine that writing plays and novels is an activity that mysterious entities do by generating random characters according to a PMF. Under this \(very simplified!\) assumption, we could now take an "unknown" text \(in this case *Macbeth*\) and then look at how likely it would have been to have been generated under two models:
+* *A* It was generated by a mysterious entity using the PMF for *Romeo and Juliet*
+* *B* It was generated by a mysterious entity using the PMF for *Metamorphosis*
+
+Neither of these will be exactly true, but we can precisely quantify to what extent *Macbeth* appears to have been generated by a similar process to these two reference texts.
+
+This is a very rough proxy for whether or not they were generated by the same mysterious entity -- i.e. author. Our model is just the distribution of characters, so is a fairly weak model of different styles. However, it is sufficient to do the comparison here.
+
+### Bayes' Rule
+
+#### Prior, likelihood, posterior
+
+##### Inverting conditional distributions
+
+We often want to know the probability of a some event A given some other event B; that is P\(A\|B\). But we are often in the situation that we can only compute P\(B\|A\). 
+
+This case is usually:
+* we know how the mysterious entity behaves P\(B\|A\)
+* we know what data we saw P\(B\)
+* we know what the mysterious entity is likely to be up to in general;
+* and we want to work out what the mysterious entity is doing P\(A\|B\).
+
+In general P\(A\|B\) ≠ P\(B\|A\) and the two expressions can be completely different. 
+
+Typically, this type of problem occurs where we:
+* want to know the probability of some event given some *evidence* \(*how likely is it that I have a disease given that my blood test came back positive?*\) 
+* but we only know the probability of observing evidence given the event \(*if you have this disease, the blood test will come back positive 95% of the time*\).
+
+**Bayes' rule** gives the correct way to invert the probability distribution:
+    
+P\(A\|B\) = P\(B\|A\) P\(A\) / P\(B\)
+
+This follows directly from the axioms of probability. Bayes' Rule is a very important rule, and has some surprising consequences. 
+
+#### Nomenclature
+
+* P\(A\|B\) is called the **posterior** -- what we want to know, or will know after the computation
+* P\(B\|A\) is called the **likelihood** -- how likely the event A is to produce the evidence we see
+* P\(A\) is the **prior**  -- how likely the event A is regardless of evidence
+* P\(B\) is the **evidence** -- how likely the evidence B is regardless of the event.
+
+Bayes' rule gives a consistent rule to take some prior belief and combine it with observed data to estimate a new distribution which combines them.
+
+We often phrase this as some **hypothesis** $H$ we want to know, given some **data** $D$ we observe, and we write Bayes' Rule as:
+    
+P\(H\|D\) = P\(D\|H\) P\(H\) / P\(D\)
+
+H and D are random variables in this expression.
+
+\(the probability of the hypothesis given the data\) is equal to \(the probability of the data given the hypothesis\) times \(the probability of the hypothesis\) divided by \(the probability of the data\). In other words, if we want to work out how likely a hypothesis is to be true given observations, but we only know how likely we are to have seen those observations if that hypothesis *was* true, we can use Bayes' rule to solve the problem.
+
+### Integration over the evidence
+
+We can say that the posterior probability is *proportional* to the product of the prior and the likelihood. But to evaluate its value, we need to compute P\(D\), **the evidence**. 
+
+It is difficult to see what this represents at first. But one way to think of it is as the result of marginalising the P\(D\) from the joint distribution P\(H,D\); that is integrating P\(H,D\) over every possible outcome of H, for each possible D. 
+
+Because probabilities must add up to 1, we can write P\(B\) as:
+P\(D\)  = Σ P\(D\|H<sub>i</sub>\) P\(H<sub>i</sub>\)
+for a set of discrete outcomes  A<sub>i</sub> or
+P\(D\) = ∫ P\(D\|H\) P\(H\) dA for a continuous distribution of outcomes.
+
+**This trick is essential in understanding Bayes Rule!**
+
+In general this can be difficult to compute. For binary simple cases where there are only two possible outcomes \(H can only be 0 or 1\), Bayes' rule can be written as:
+
+P\(H=1\|D\) = P\(D\|H=1\)P\(H=1\) / P\(D\|H=1\)P\(H=1\) \+ P\(D\|H=0\) D\(H=0\)
+    
+### Natural frequency
+
+There is an approach to explaining problems like this which makes it much less likely to make poor judgements. **Natural frequency** explanations involve imagining concrete populations of a fixed size \(10000 people in a room, for example\), and considering the proportions of the populations as *counts* \(how many people in the room have the plague?\).
+
+### Bayes' rule for combining evidence
+
+Bayes' rule is the correct way to combine prior belief and observation to update beliefs. We always transform from one probability distribution \(prior\) to a new belief \(posterior\) using some observed evidence. This can be used to "learn", where "learning" means updating a probability distribution based on observations. It has enormous applications anywhere uncertain information must be fused together, whether from multiple sources \(e.g. sensor fusion\) or over time \(e.g. probabilistic filtering\). 
+
+### Entropy
+
+A key property of a probability distribution is the **entropy**. Intuitively, this is a measure of the "surprise" an observer would have when observing draws from the distribution, or alternatively, the \(log\) measure of a number of distinct "states" a distribution could represent. A flat, uniform distribution is very "surprising" because the values are very hard to predict; a narrow, peaked distribution is unsurprising because the values are always very similar. 
+
+This is a precise quantification -- it gives the *information* in a distribution. The units of information are normally bits; where 1 bit of information tells you the answer to exactly one yes or no question. The entropy tells you exactly how many of bits are needed \(at minimum\) to communicate a value from a distribution to an observer *who knows the distribution already*. Alternatively, you can see the number of distinct states the distribution describes as $p = 2<sup>H\(X\)</sup> -- this value is called the **perplexity**, and it can be fractional.
+
+### Entropy is just the expectation of log\-probability
+
+The entropy of a (discrete) distribution of a random variable X can be computed as:
+    
+H\(X\) = ∑ \-P\(X=x\) log<sub>2</sub>\(P\(X=x\)\)
+
+This is just the expected value of the log\-probability of a random variable \(the "average" log\-probability\).
+
+### Tossing coins
+
+Consider a coin toss: this is sampling from a discrete random variable that can take on two states, heads and tails. 
+
+If we call our two possible states 0 \(heads\) and 1 \(tails\), we can characterise this with a single parameter q, where P\(X=0\)=q and P\(X=1\)=\(1\-q\) \(this follows from the fact that as P\(X=0\)\+P\(X=1\) *must* equal 1 -- the coin must land on one side or the other. We ignore edge landings!\).
+
+If this process is very biased and heads are much more likely than tails \(q<<0.5\), an observer will be unsurprised most of the time because predicting heads will be a good bet. If the process is unbiased \(q=0.5\), an observer will have no way to predict if a head or tail is more likely. We can write the entropy of this distribution:
+H\(X\) = P\(X=0\) log<sub>2</sub> P\(X=0\) + P\(X=1\) log<sub>2</sub> P\(X=1\)
+ = \-q log<sub>2</sub> q \- \(1\-q\) log<sub>2</sub> P\(1\-q\)
+
+#### Interpreting entropy
+
+We can see that observing a "q" means the next character isn't surprising at all: we know for *sure* that it will be a "u", and thus the entropy is 0.  There is only one configuration of the world for the next character \(under this model\) if we have just seen a "u".
+
+Likewise, seeing a space character gives us very little information, and the next character could be anything: the character after a space will surprise us -- there are lots of configurations of the world that might follow a space. That surprise is as much surprise as we would get by tossing about 4 coins, or an entropy of about 4 bits.
+
+## Week 9
+
+### Continuous random variables
+#### Problems with continuous variables
+
+Continuous random variables are defined by a PDF \(probability *density* function\), rather than a PMF \(probability *mass* function\). A PMF essentially just a vector of values, but a PDF is a function mapping *any* input in its domain to a probability.  
+This seems like a subtle difference\ (as a PMF has more and more "bins" it gets closer and closer to a PDF, right?\), but it has a number of complexities.
+
+* The probability of any specific value is P\(X=x\)=0 *zero* for every possible x, yet any value in the *support* of the distribution function \(everywhere the PDF is non\-zero\) is possible. 
+
+* There is no direct way to sample from the PDF in the same way as we did for the PMF. But there are several tricks for sampling from continuous distributions.
+
+* We cannot estimate the true PDF from simple counts of observations like we did for the empirical distribution. This can never "fill in" the PDF, because it will only apply to a single value with zero "width".
+
+* Bayes' Rule is easy to apply to discrete problems. But how do we do computations with continuous PDFs using Bayes' Rule?
+
+* Simple discrete distributions don't have a concept of dimension. But we can have continuous values in 1 dim, or in vector spaces n, representing the probability of a random variable taking on a vector value, or indeed distributions over other generalisations \(matrices, other fields like complex numbers or quaternions and even more sophisticated structures like Riemannian manifolds\).
+
+### Probability distribution functions
+
+The PDF f<sub>X</sub>\(x\) of a random variable X maps a value x \(which might be a real number, or a vector, or any other continuous value\) to a single number, the density at the point. It is a function \(assuming a distribution over real vectors\) n → \+, where \+ is the positive real numbers, and ∫ f<sub>X</sub>\(x\)=1.
+
+* While a PMF can have outcomes with a probability of at most 1, it is *not* the case that the maximum value of a PDF is f<sub>X</sub>\(x\) ≤ 1 -- *just that the integral of the PDF be 1.*
+
+The value of the PDF at any point is **not** a probability, because the probability of a continuous random variable taking on any specific number must be zero. Instead, we can say that the probability of a continuous random variable X lying in a range \(a,b\) is:
+    
+P\(X ∈ \(a,b\)\) = \(a < X < b\)  = ∫ f<sub>X</sub>\(x\) from a to b
+
+#### Support
+
+The **support** of a PDF is the domain it maps from where the density is non-zero. 
+
+supp\(x\) = x such that f<sub>X</sub>\(x\) > 0
+
+Some PDFs have density over a fixed interval, and have zero density everywhere else. This is true of the uniform distribution, which has a fixed range where the density is constant, and is zero everywhere. This is called **compact support**. We know that sampling from a random variable with this PDF will always give us values in the range of this support. Some PDFs have non-zero density over an infinite domain. This is true of the normal distribution. A sample from a normal distribution could take on *any* real value at all; it's just much more likely to be close to the mean of the distribution than to be far away. This is **infinite support**.
+
+### Cumulative distribution functions
+
+The **cumulative distribution function** or CDF of a real\-valued random variable is 
+    
+F<sub>X</sub>\(x\) = ∫ f<sub>X</sub>\(x\) from \-∞ to x = P\(X ≤ x\)
+
+
+Unlike the PDF, the CDF always maps $x$ to the codomain \[0,1\]. For any given value F<sub>X</sub>\(x\) tells us how much probability mass there is that is less than or equal to x. Given a CDF, we can now answer questions, like: what is the probability that random variable X takes on a value between 3.0 and 4.0?
+
+P\(3 ≤ X ≤ 4\) = F<sub>X</sub>\(4\) \- F<sub>X</sub>\(3\)
+
+This *is* a probability. Sometimes it is more convenient or efficient to do computations with the CDF than with the PDF.
+
+### Location and scale
+
+The normal distribution places the point of highest density at to its center μ \(the "mean"\), with a spread defined by σ<sup>2</sup> \(the "variance"\). This can be though of the **location** and **scale** of the density function. Most standard continuous random variable PDFs have a location \(where density is concentrated\) and scale \(how spread out the density is\).
+
+#### Normal modelling
+
+It seems that this might be a very limiting choice but there are two good reasons for this to work well as a model in many contexts:  
+1. Normal variables have very nice mathematical properties and are easy to work with analyitically \(i.e. without relying on numerical computation\).
+2. The *central limit theorem* tells us that any sum of random variables \(however they are distributed\) will tend to a *Levy stable distribution* as the number of variables being summed increases. For most random variables encountered, this means the normal distribution \(one specific Levy stable distribution\).
+
+### Central limit theorem
+
+If we form a sum of many random variables Y = X<sub>1</sub> \+ X<sub>2</sub> \+ X<sub>3</sub> \+ ..., then for almost any PDF that each of X<sub>1</sub>, X<sub>2</sub>,... might have, the PDF of Y will be approximately normal, Y ∼ N\(μ, σ\). This means that any process that involves a mixture of many random components will tend to be Gaussian under a wide variety of conditions.
+
+### Multivariate distributions: distributions over n dims
+
+Continuous distributions generalise discrete variables \(probability mass functions\) \(e.g. over Z\) to continuous spaces over 1 dim via probability density functions. 
+
+Probability densities can be further generalised to vector spaces, particularly to n dims. This extends PDFs to assign probability across an entire vector space, under the constraint that the \(multidimensional integral\)     
+∫ f<sub>X</sub>\(x) = 1 for x in n dims.  
+
+Distributions with PDFs over vector spaces are called **multivariate distributions** \(which isn't a very good name; vector distributions might be clearer\). In many respects, they work the same as **univariate** continuous distributions. However, they typically require more parameters to specify their form, since they can vary over more dimensions.
+
+#### Multivariate uniform
+
+The multivariate uniform distribution is particularly simple to understand. It assigns equal density f<sub>X</sub>\(x<sub>i</sub>\) = f<sub>X</sub>\(x<sub>j</sub>\)$ to some \(axis\-aligned\) box in a vector space n dims, such that ∫ f<sub>X</sub>\(x\)=1, x ∈ a box. 
+
+It is trivial to sample from; we just sample *independently* from a one-dimensional uniform distribution in the range [0,1] to get each element of our vector sample. This is a draw from a n\-dimensional uniform distribution in the unit box.
+
+## Transformed uniform distribution
+
+If we want to define a distribution over any box, we can simply transform the vectors with a matrix A and shift by adding an offset vector b.
+
+### Normal distribution
+
+The normal distribution \(above\) is very widely used as the distribution of continuous random variables. It can be defined for a random variable of *any dimension*; a **multivariate normal** in statistical terminology. In Unit 5, we saw the idea of a **mean vector** μ and a **covariance matrix** Σ which captured the "shape" of a dataset in terms of an ellipse. *These are in fact the parameterisation of the multivariate normal distribution.*
+
+A multivariate normal is fully specified by a mean vector μ and the covariance matrix Σ. If you imagine the normal distribution to be a ball shaped mass in space, the mean *translates* the mass, and covariance applies a transformation matrix \(scale, rotate and shear\) to the ball.
+
+Just like the uniform distribution, we can think of drawing samples from a "unit ball" with an independent normal distribution in each dimension. These samples are transformed linearly by the covariance matrix Σ and the mean vector μ, just like A and b above \(though Σ is actually $A<sup>\-1/2</sup> for technical reasons\)
+
+### Joint and  marginal PDFs
+
+We can look at the PDF of a multivariate normals for different covariances and mean vector \(centres and spreads\).
+
+### Joint and marginal distributions
+
+We can now talk about the **joint probability density function** \(density over all dimensions\) and the **marginal probability density function** \(density over some sub\-selection of dimensions\).
+
+For example, consider $X ∼N\(μ, Σ\), X ∈ 2 dim, a two dimensional \("bivariate"\) normal distribution. We can look at some examples of the PDF, showing:
+
+* Joint P\(X\)
+* Marginal P\(X<sub>1</sub>\) and P\(X<sub>2</sub>\)
+* Conditionals P\(X<sub>1</sub>\|X<sub>2</sub>\) and P\(X<sub>2</sub>\|X<sub>1</sub>\)
+
+### Ellipses
+
+When we spoke informally about the covariance matrix "covering" the data with an ellipsoidal shape, we more precisely meant that
+*if* we represented the data as being generated with a normal distribution, and chose the mean vector and covariance matrix that best approximated that data, then the contours of the density of the PDF corresponding to equally spaced isocontours would be ellipsoidal.
+
+### Monte Carlo 
+
+How do we *draw* samples from a continuous distribution? How can we simulate the outcomes of a random variable X? This is a vital tool in computational statistics. One of the reasons computers are useful for statistical analysis is that they can generate \(pseudo\)\-random numbers very quickly.
+
+#### von Neumann and Ulam
+
+During the *Manhattan project* that developed the atomic bomb during the Second World War, there were many difficult probabilistic equations to work out. Although *analytical techniques* for solving certain kinds of problems existed, they were only effective some narrow types of problem and were tricky to apply to the problems that the Manhattan project had to solve.
+
+John von Neumann and Stanislaw Ulam developed the **Monte Carlo** method to approximate the answer to probabilistic problems, named after the casinos of Monte Carlo. This involved setting up a *simulation* with stochastic \(random\) components. By running the simulation many times with different random behaviour, the population of *possible* behaviours could be approximated.
+
+For example, computing the expectation of a function of a random variable can often be hard for continuous random variables. The integral for:
+
+expected g\(X\) = ∫ f<sub>X</sub>\(x\) g\(x\) dx
+
+may be intractable. However it is often very easy to compute g\(x\) for any possible x. If we can somehow sample from the distribution P\(X=x\), then we can approximate this very easily:
+    
+expected g\(X\) = ∫ f<sub>X</sub>\(x\) g\(x\) dx ≈ 1/N ∑ g\(x<sub>i</sub>\) for i in range\(1, N\)
+
+where x<sub>i</sub> are random samples from P\(X=x\), defined by the PDF f<sub>X</sub>\(x\). This gets better as N gets larger.
+
+### Throwing darts
+
+For example, imagine trying to work out the expectation of dart throw. A dart board has sections giving different scores. We might model the position of the dart as a normal distribution over the dart space. This models the human variability in throwing. The expected score of a throw requires evaluating the integral of the normal PDF multiplied by the score at each point -- which isn't feasible to compute directly.
+
+
+But we can sample from a multivariate normal distribution easily; we saw this in the last unit; just sample from d independent standard normals, and transform with a linear transform \(matrix\). So instead of trying to solve a very hard integral, we can simulate lots of dart throws, which follow the pattern of the normal distribution, and take the average score that they get. If we simulate a lot of darts, the average will be close to the true value of the integral.
+
+### Inference
+
+#### Population and samples, statistics and parameters
+
+**Inferential statistics** is concerned with estimating the properties of an unobserved "global" **population** of values from a limited set of observed **samples**. This assumes that there is some underlying distribution from which samples are being drawn. This is a hidden process \(the "mysterious entity"\), which we only partially observe through the samples we see.
+
+* **Population** is the unknown set of outcomes \(which might be infinite\)
+    * **Example** the weight of all beetles
+    * **Parameter** describes this **whole population**, e.g. the mean weight of all beetles
+    
+* **Sample** is some subset of the population that has been observed.
+    * **Example** 20 beetles whose weight has been measured
+    * **Statistic** is a function of the sample data, e.g. the arithmetic mean of those 20 samples
+    
+The parameters of the population distribution govern the generation of the samples that are observed. The problem of statistics is how to **infer** parameters given samples.
+
+### Two worldviews
+
+* **Bayesian inference** means that we consider *parameters* to be random variables that we want to refine a distribution over, and that data are fixed \(known, observed data\). We talk about belief in particular parameter settings.
+
+* **Frequentist inference** means that we consider *parameters* to be fixed, but data to be random. We talk about how we approach an accurate estimate of the true parameters as our sample size increases.
+
+### Three approaches
+
+We will see three different approaches to doing inference:
+
+* **Direct estimation** of parameters, where we define *functions of observations* that will estimate the values of parameters of distributions *directly*. This requires we assume the form of the distribution governing the mysterious entity. It is very efficient, but only works for very particular kinds of model. We need to have *estimator functions* for each specific distribution we want to estimate, which map observations into parameter estimates. 
+
+* **Maximum likelihood estimation** of parameters, where we use **optimisation** to find parameter settings that make the the observations appear as likely as possible. We can see this as tweaking the parameters of some predefined model until they "best align" with the observations we have. This requires an iterative optimisation process, but it works for any model where the distribution has a known likelihood function \(that is we can compute how likely observations were to have been generated by that model\).
+
+* **Bayesian, probabilistic** approaches explicitly encode belief about the behaviour of the mysterious entity using probability distributions. In Bayesian models, we assume a distribution over the parameters themselves, and consider the *parameters to be random variables*. We have an initial hypotheses for these parameters \("prior"\) and we use observations to update this belief to hone our estimate of the parameters to a tighter \(hopefully\) distribution \("posterior"\). Unlike the other methods, we do not estimate a single "parameter setting", but instead we always have a distribution over possible parameters which changes as data is observed. This is much more robust and arguably more coherent way to do inference, but it is harder to represent and harder to compute. We require both **priors** over parameters, and a **likelihood function** that will tell us how likely data is to have been generated under a particular parameter setting.
+
+*Note: there are more general forms of Bayesian inference, like Approximate Bayesian Computation \(ABC\) which do not even require likelihood functions, just the ability to sample from distributions. We will not discuss these.*
+
+### Estimators
+
+Unlike discrete distributions, where the PMF can be estimated directly from observations using the empirical distribution \(as we did for Romeo and Juliet\), there is no analogous direct procedure for continuous distributions.
+
+For many continuous distributions statisticians have developed **estimators**; functions that can be applied to sets of observations to estimate the most likely parameters of a probability density function defining a distribution that might have generated them.
+
+The **form** of the distribution must be decided in advance \(for example, the assumption that the data has been generated by an approximately normal distribution\); this is usually called the **model**. The specific parameters can then be calculated under the assumption of this model.
+
+### Direct estimation
+
+One way of doing inference is to, if we assume a particular *form* of the distribution \(e.g. assume it is normal\), use **estimators** of **parameters** \(such as the mean and variance\) of this population distribution. These **estimators** are computed via **statistics** which are summarising functions we can apply to data. *These estimators need to specially derived for each specific kind of problem.*
+
+For example, the arithmetic mean, and the standard deviation of a set of observed samples are **statistics** which are **estimators** of the parameters of μ and σ normal distribution. If we have observations \(believed to have been\) drawn from a normal distribution, we can estimate the parameters μ and σ of that distribution just by computing the mean and standard deviation.
+
+### Standard estimators
+#### Mean
+
+The **arithmetic mean** is sum of sample values x<sub>1, x<sub>2</sub>, ..., x<sub>n</sub> divided by the number of values:  
+μ^ = 1/N ∑ x<sub>i</sub> for i in range\(1,N\)
+
+### Sample mean
+
+The population mean is μ = expected X for a random variable X. It turns out the *arithmetic mean of the observed samples* or **sample mean**, which we write with a *little hat* μ^ is a good \(footnote: good is what statisticians would call "unbiased"\) estimator of the true population mean μ. As the number of samples increases, our estimate μ^ of the population mean μ gets better and better. 
+
+It's important to separate the idea of  
+* the population mean μ, which \(usually!\) exists but is not knowable directly. It is 
+the expectation of the random variable E\[X\].
+* the sample mean μ^ which is just the arithmetic average of samples we have seen \(e.g. computed via `np.mean(x, axis=0)`\)
+
+The sample mean is a **statistic** \(a function of observations\) which is an **estimator** of the population mean \(which could be a **parameter** of a distribution\). Specific bounds can be put on this estimate; the standard error gives a measure of how close we expect that the arithmetic mean of samples is to the population mean, although the interpretation is not straightforward. 
+
+The mean measures the **central tendency** of a collection of values. The **mean vector** generalises this to higher dimensions.
+
+### Variance and standard deviation
+
+The sample variance is the squared difference of each value of a sequence from the mean of  that sequence:
+
+σ<sup>2</sup>^ = 1/N ∑ \(x<sub>i</sub>\-μ^\)<sup>2</sup> for i in range\(1,N\).
+
+It is an estimator of the population variance, expected \(X\- expected X\)<sup>2</sup>
+
+The sample standard deviation is just the square root of this value. 
+
+σ^ = sqrt \[1/N ∑ \(x<sub>i</sub>\-μ^\)<sup>2</sup> for i in range\(1,N\)\]
+
+The variance and the standard deviation measure the **spread** of a collection of values. The **covariance matrix** Σ generalises this idea to higher dimensions.
+
+##### Relation to normal distribution
+
+If we *assume* that our data is generated by a normal distribution, then the statistics **mean** μ^ and **variance** σ<sup>2</sup>^  estimate the parameters  μ, σ of that normal distribution, N\(μ, σ\). Even if the underlying process isn't exactly normal, it may well be close to being normal because of the Central Limit Theorem. And even if that doesn't apply, the mean and the variance are still useful *descriptive statistics*.
+
+### Fitting
+
+What does it mean to estimate the parameters of a normal distribution that might be creating app ratings? We are **fitting** a distribution, governed by a PDF, to a set of observations. In our discrete examples, we could fit a distribution simply by computing the empirical distribution \(assuming we had enough samples\). But estimating a PDF requires some structure, a space of functions with some parameterisation.
+
+### Sampling from the model
+
+We can draw samples from our fitted distribution, and compare them to our results. They won't be a very good representation, because the data we have is clearly not normal. But they show what our tame mysterious entity is producing, and let us assess our **modelling assumptions** -- that the app ratings were characterised by just a mean and standard deviation.
+
+### Maximum likelihood estimation: estimation by optimisation
+
+What if we don't have estimators, ready built to estimate the parameters that we want? How can we do inference? How can we fit distribution parameters to observations?
+
+In many cases, we can compute the **likelihood** of a an observation being generated by a specific underlying random distribution. This is the **likelihood** that we saw earlier. For a PDF, the likelihood of a value x is just the value of the PDF at x: f<sub>X</sub>\(x\). The likelihood is a function of the data, under the assumption of some particular parameters. 
+
+The likelihood of many *independent* observations is the product of the individual  likelihoods, and the log-likelihood is the sum of the individual log-likelihoods.
+
+log L\(x<sub>1</sub>, ..., x<sub>n</sub>\) = ∑ log f<sub>X</sub>\(x<sub>i</sub>\)
+
+Imagine we have a distribution which we *don't* know any **estimators** for the parameters. How could we estimate what they might be, given some data? We could write all of our parameters as vector θ; for example a normal distribution would have θ =\[μ, σ\].
+
+### Optimisation solves all problems
+
+Even though we don't have a fixed, closed form function to estimate the parameters, with a likelihood function we can apply optimisation to work out a parameter setting under which the data we *actually* observed was most likely. This corresponds to twiddling the knobs on our "mysterious entity" machine, until we find one that outputs the largest likelihood values when we feed in samples to it.
+
+If the likelihood depends on some parameters of a distribution θ, then we write:
+
+L\(θ \| x\)
+
+Then, we could define an **objective function**; to maximise the log-likelihood, or equivalently to minimise the negative log\-likelihood.
+
+θ<sup>\*</sup> = argmin L\(θ\)  
+L\(θ\) = \-log L\(θ \| x<sub>1</sub>, ..., x<sub>n</sub>\) = \-∑ log f<sub>X</sub>\(x<sub>i</sub>;θ\),
+
+assuming our f<sub>X</sub>\(x<sub>i</sub>\) can be written as f<sub>X</sub>\(x<sub>i</sub>;θ\) to represent the PDF of f with some specific choice of parameters given by θ.
+
+### Maximum likelihood estimation
+
+This is *very* similar to the approximation objective function we saw before \|f<sub>X</sub>\(x<sub>i</sub>;θ\)\|, but we have y=0 and we only have a scalar output from f so the norm is unnecessary. We already know how to solve this kind of problem; just optimise. This is called **maximum likelihood estimation** and is a general technique for determining parameters of a distribution which we don't know given some observations. It will find the **best** setting of parameters that would explain how the observations came to be.
+
+If we're lucky, this will be differentiable and we can use gradient descent \(or stochastic gradient descent -- note that the objective function is a sum of simple sub\-objective functions\). If we're not, we can fall back to less efficient optimisers. We don't need special estimators in this case, as long as we can evaluate the PDF f<sub>X</sub>\(x<sub>i</sub>;θ\) for any setting of parameters θ. *This works for a much wider class of probability distributions*.
+
+### Fitting a normal with MLE
+
+We can for example look at the problem of estimating the mean and variance of a normal distribution from a set of \(assumed to be independent\) samples *without* using estimators; for example our app ratings. To do this, we need to be able to compute the likelihood for any given sample, and take the product \(or rather sum of log likelihoods\) for all of those samples. 
+
+This gives us our objective function. If we flip the sign, so that we minimise the negative log\-likelihood, we will then search for the parameter vector that makes the data most likely. 
+
+For a univariate normal distribution, the parameters are just μ and σ, so θ=\[μ, σ\].
+
+In this case, of course, we *do* have estimators; but the procedure works just as well when we only have a likelihood function.
+
+### A mixture model
+
+But what if our model was more complicated that just a normal distribution? We could imagine that we model in some other way, perhaps that might be able to capture the fact that app B seems to have two "humps" on either side. One very simple model is a **mixture of Gaussians**, where we just say that we expect the PDF of the distribution we are trying to fit is a weighted combination \(convex sum\) of N different normal distributions \("components"\) N<sub>i</sub>\(μ<sub>i</sub>, σ<sub>i</sub>\), each with its *own* μ<sub>i</sub>, σ<sub>i</sub>, and with a weighting factor λ<sub>i</sub> that says how important this "component" is, where ∑ λ<sub>i</sub>=1. This lets us represent "humpy distributions.
+
+This model lets us imagine that ratings might belong to one "cluster" or another. The placement and size of each cluster is given by the μ<sub>i</sub> and σ<sub>i</sub> for that component and λ<sub>i</sub> gives an idea of how likely data is to fall into that cluster.
+
+We can easily plot the PDF of this function; it's just:  
+f<sub>X</sub>\(x\) = ∑ λ<sub>i</sub> n<sub>X</sub>\(x; μ<sub>i</sub>, σ<sub>i</sub>\), where n<sub>X</sub>\(x; μ<sub>i</sub>, σ<sub>i</sub>\) = 1/Z e<sup>\(x\-μ<sub>i</sub>\)<sup>2</sup> / 2σ<sup>2</sup>}</sup> is the standard normal PDF function.
+
+### Fitting mixtures
+
+This is a much more plausible model of our app ratings, and might be a much better model. But how do we fit it? Even if we fix N in advance, we definitely don't have any direct estimators that can estimate the mean and standard deviation \(and weighting\) of a sum of normal PDFs. This simply isn't something we know how to do. 
+
+**But** the \(log\) likelihood is trivial to write in code. For each observation x, we just compute the sum of the weighted PDFs for 
+each component, and the result is likelihood for that observation. This is a function of the data L\(θ\|x\) , and our parameter vector is θ = \[μ<sub>1</sub>, σ<sub>1</sub>, λ<sub>1</sub>, μ<sub>2</sub>, σ<sub>2</sub>, λ<sub>2</sub>, ...\]$.
+
+### Bayesian Inference
+
+Bayesian inference involves thinking about the problem quite differently. Bayesians represent the *parameters* of the distribution they are estimating as random variables *themselves*, with distributions of their own. 
+
+Prior distributions are defined over these parameters \(e.g. we might believe that the mean app rating could be any value 1.0-5.0 with equal probability\) and evidence arriving as updates is combined using Bayes' Rule to refine our belief about the distribution of the parameters. We again consider our distribution to be characterised by some parameter vector θ and we want to refine a distribution over possible θs.
+
+We don't think about estimators, or their sampling distributions, and it doesn't make sense to talk about finding the best parameter setting; we can only have *beliefs* in parameter settings which must be represented probabilistically. We do not seek to find the most likely parameter setting \(as in direct estimation or MLE\), but to infer a distribution over possible parameter settings *compatible with the data*. 
+
+We talk about inferring a **posterior** distribution over the parameters, given some **prior** belief and some **evidence**. We assume that we have a **likelihood function** P\(D\|θ\), and a prior over parameters P\(θ\) and we can then use Bayes Rule in the form:
+
+P\(θ\|D\) = P\(D\|θ\) P\(θ\) / P\(D\)
+
+which gives us a new distribution over θ given some observations. Bayes' rule applies just as well to continuous distributions as to discrete ones, but computations in "closed form" \(i.e. algebraically\) are much harder. 
+
+This *can* be done in closed form to find P\(θ\|D\) in certain cases, but the algebra is often complex and the model choices are limited; we will not discuss how to do this. When it is possible, it is, however, much more computationally efficient. Instead we will approach this from a computational perspective and find a way to draw *samples* from the posterior distribution P\(θ\|D\).
+
+### Inference
+
+How can we compute the posterior distribution P\(θ\|D\)? We won't discuss how to find this in closed form \(as a function\) -- this is sometimes possible, but mathematically involved because we need to deal with distributions over $θ$ -- but rather how to draw samples from this posterior, given a prior and a likelihood and some observations. 
+
+There is a huge literature on how to solve this problem, which has a few nasty parts:
+* P\(D\|θ\) needs to be computed for a **distribution** over θ, not just some numbers. It's no good to just compute the probability for one specific θ; we have to work with distribution functions.
+* P\(D\) = ∫<sub>θ</sub> P\(D\|θ\)P\(θ\) which is likely intractable.
+
+#### Making it tractable
+
+There are lots of ways this can be simplified to make it possible to solve. We are going to use two:
+
+##### Samples will do
+
+We often can't compute P\(θ\|D\) because we don't know how to do operations on products of functions. But it's often trivial for *specific, concrete* values of θ. For example, for a given fixed θ we can compute both the likelihood and the prior of that specific example.
+
+This leads us to the idea of **drawing samples** from the posterior distribution P\(θ\|D\), instead of trying to compute the distribution exactly. 
+
+##### Relative probability only
+
+We can make a simplifying assumption: we only care about the *relative* probability of different parameter settings with the data that we actually have, D. That is we have
+
+P\(θ\|D\) ∝ P\(D\|θ\)P\(θ\) and ignore the fact that this is the posterior scaled by some unknown constant  Z=1/P\(D\). This only makes sense because we are only considering one model with one set of data in this example.
+
+### Markov Chain Monte Carlo
+
+We can implement a procedure to sample from the \(relative\) posterior distribution via a very simple modification of the *simulated annealing* algorithm. 
+
+This defines a random walk through the space of parameter settings, proposing small random tweaks to the parameter settings, and accepting "jumps" if they make the estimate more likely, or with a probability proportional to the change in P\(D\|θ\)P\(θ\) if not. The advantage of this approach is that we can work with *definite samples* from θ and we don't have to do any tricky integrals. This approach is called **Markov Chain Monte Carlo**
+
+All we require is a way of evaluating P\(θ\) \(prior\) and P\(D\|θ\) \(likelihood\) for any specific θ.
+
+### MCMC in practice: sampling issues
+
+We will use Markov Chain Monte Carlo to solve the Bayesian inference problem. The **great thing** about MCMC approaches is that you can basically write down your model and then run inference directly. There is no need to derive complex approximations, or to restrict ourselves to limited models for which we can compute answers analytically. Essentially, no maths by hand; everything is done algorithmically.
+
+MCMC allows us to draw samples from any distribution P\(X=x\) *that we can't sample from directly*. In particular, we will be able to sample from the posterior distribution over parameters.  
+
+The **bad thing** about MCMC approaches is that, even though it will do the "right thing" *asymptotically*, the choice of sampling strategy has a very large influence for the kind of sample runs that are practical to execute. Bayesian inference should depend only on the priors and the evidence observed; but MCMC approaches also depend on the sampling strategy used to approximate the posterior. 
+
+### What distribution are we sampling from?
+
+In the case of Bayesian inference P\(θ\|D\) = P\(D\|θ\) P\(θ\) / P\(D\) = P\(D\|θ\)P\(θ\) / ∫<sub>θ</sub> P\(D\|θ\)P\(θ\).
+* P\(θ\|D\) is the posterior, the distribution over the parameters θ given the data \(observations\) D, using:
+* the likelihood P\(D\|θ\), 
+* prior P\(θ\) and 
+* evidence P\(D\). 
+
+In other words, what is the distribution over the parameters given the observations and the prior? If we assume, as above, that we don't care about P\(D\), because we are only comparing different possible values of θ, then we can draw samples from a distribution proportional to P\(D\|θ\)P\(θ\).
+
+### Metropolis-Hastings
+
+Metropolis\-Hastings \(or just plain Metropolis\) is a wonderfully elegant and relatively effective way of doing this MCMC algorithm, and is able to work in high\-dimensional spaces \(i.e. when θ is complicated\). 
+
+Metropolis sampling uses a simple auxiliary distribution called the **proposal distribution** Q\(θ'\|θ\) to help draw samples from an intractable posterior distribution P\(θ\|D\). This is analogous to what we called the **neighbourhood function** in the optimisation section.
+
+Metropolis-Hastings uses this to **wander around** in the distribution space, accepting jumps to new positions using Q\(θ'\|θ\) to randomly sample the space of P\(θ\|D\).  This random walk \(a **Markov chain**, because we make a random jump conditioned only on where we currently are\) is a the "Markov Chain" bit of "Markov Chain Monte Carlo".
+
+This is just like the simulated annealing algorithm, except now there is a function f<sub>X</sub>\(θ\) which makes some steps more likely than others instead of a likelihood function. We just take our current position θ, and propose a new position θ', that is a random sample drawn from Q\(θ'\|θ\). Often this is something very simple like a normal distribution with mean x and some preset $σ$: Q\(θ'\|θ\) = N\(θ, σ'\)
+
+### Trace
+
+The history of accepted samples of an MCMC process is called the **trace**. We can estimate model parameters by looking at the histogram of the **trace**, for example. The trace is the sequence of samples \[x<sup>\(1\)</sup>, x<sup>\(2\)</sup>, x<sup>\(3\)</sup>, ... x<sup>\(n\)</sup>\]$, \(approximately\) drawn from the **posterior** distribution P\(θ\|D\) via MCMC.
+
+### Predictive posterior: sampling from the model
+
+The **predictive posterior** is the *distribution over observations* we would expect to see; predictions of future samples. This means drawing samples from the model, while integrating over parameters from the posterior. By sampling from the predictive posterior, we are generating new synthetic data that should have the same statistical properties as the data \(if our model is good\).
+
+We can do this with a two step, nested process:
+
+* for n repetitions
+* draw samples from our posterior distribution over parameters to give us a concrete distribution
+    * for m repetitions
+        * draw samples from this concrete distribution
+
+### Linear regression
+
+**Linear regression** is the fitting of a line to observed data. It assumes the mysterious entity generates data where one of the observed variables is scaled and shifted version of another observed variable, corrupted by some noise; a linear relationship. It is a very helpful lens through which different approaches to data modelling can be seen; it is pretty much the simplest useful model of data with relationships, and the techniques we use easily generalise from linear models to more powerful representations.
+
+The problems is to estimate what that scaling and shifting is. In a simple 2D case, this is the gradient m and offset c in the equation y=mx\+c. It can be directly generalised to higher dimensions to find A and b in y = Ax \+ b, but we'll use the simple "high school" y=mx\+c case for simplicity.
+
+We assume that we will fit a line to *noisy* data. That is the process that we assume that is generating the data is y=mx\+c\+ϵ
+, where ϵ is some noise term. We have to make assumptions about the distribution of ϵ in order to make inferences about the parameters.
+
+One simple assumption is that ϵ ∼ N\(0, σ<sup>2</sup>\), i.e. that we have normally distributed variations in our measurements. So our full equation is:
+
+y=mx\+c\+N\(0, σ<sup>2</sup>\),
+
+or equivalently, putting the mx\+c as the mean of the normal distribution:
+
+y ∼ N\(mx\+c, σ<sup>2</sup>)
+
+Note that we assume that y is a random variable, x is known, and that m, c, σ are parameters that we wish to infer from a collection of observations.
+
+Our problem is: given just the inputs x and return values$y, what are the values of the *other* argument θ.
+
+### Linear regression via direct optimisation
+
+We saw how this problem could be solved as a **function approximation** problem using optimisation. We can write an objective function:
+
+L\(θ\) = \|f\(x;θ\)\-y\|, where θ=\[m,c\]$ and f\(x;θ\) = θ<sub>0</sub> x \+ θ<sub>1</sub>. 
+
+If we choose the squared Euclidean norm, then we have, for the simple y=mx\+c case:
+
+L\(θ\) = \|f(x;θ)\-y\|$$
+L\(θ\) = \|θ<sub>0</sub> x + θ<sub>1</sub> \- y\|<sup>2</sup><sub>2</sub> = \(θ<sub>0</sub> x + θ<sub>1</sub> \- y\)<sup>2</sup>, 
+
+which we can easily minimise, e.g. by gradient descent, since computing ∇ L\(θ\) turns out to be easy.  This is **ordinary linear least\-squares**.
+
+*Linear least squares tried to make the size of the squares nestled between the line and data points as small as possible*
+
+In fact, we can find a closed form solution to this problem, without doing any iterative optimisation. This is because we have an **estimator** that gives us an estimate of the parameters of the line fit directly from observations. We can derive this, for example, by setting $∇ L(θ)=0$ and solving directly (high-school optimisation).
+
+### Linear regression via maximum likelihood estimation
+We could also consider this to be a problem of inference. We could explicitly assume that we are observing samples from a distribution whose parameters we wish to estimate. This is a **maximum likelihood approach**. This requires that we can write down the problem in terms of the distribution of random variables.
+
+If we assume that "errors" are normally distributed values which are corrupting a perfect $y=mx+c$ relationship, we might have a model Y ∼ N\(mx+c, σ^2\); Y has mean mx\+c and some standard deviation σ. 
+
+We can write this as a maximum likelihood problem (MLE), where we maximise L\(θ\|x<sub>1</sub>, y<sub>1</sub>, x<sub>2</sub>,y<sub>2</sub>, ..., x<sub>n</sub>, y<sub>n</sub>\). To avoid underflow, we work with the log of the likelihood and minimise the negative log\-likelihood. The log\-likelihood of  independent samples x<sub>i</sub>  is given by:
+
+log L\(θ\|x<sub>1</sub>, y<sub>1</sub>,  ..., x<sub>n</sub>, y<sub>n</sub>\) = log ∏ f<sub>Y</sub>\(x<sub>i</sub>, y<sub>i</sub>) = ∑ log f<sub>Y</sub>(x<sub>i</sub>, y<sub>i</sub>\), 
+
+f<sub>Y</sub>(x<sub>i, y<sub>i) = \frac{1}{Z}\, e<sup>\-\(y<sub>i</sub> \- μ\)<sup>2</sup> / 2σ<sup>2</sup></sub>, μ = mx<sub>i\+c
+
+We can then minimise the negative log-likelihood to find the "most likely" setting for θ=\[m,c,σ\], which \(if we feel like writing out long equations in LaTeX\), we could write as an objective function:
+
+L\(θ\) = \-∑ log 1 / Z, e<sup>\-(y<sub>i - θ<sub>0</sub> x<sub>i + θ<sub>1</sub>\) / <sup>2</sup> / 2 θ<sub>2</sub><sup>2</sup></sub>,
+
+In the case where we have normally distributed noise for linear regression, this turns out to be *exactly* equivalent to the direct optimisation with linear least-squares, although we will also find the standard deviation of the error σ in addition to m and c. This is **maximum likelihood linear regression**.
+
+*Maximum likelihood estimation tried to find parameters of a line that made the observations likely*
+
+### Bayesian linear regression 
+
+What if we wanted to know how sure our estimates of m and c \(and σ\) were? MLE will tell us the *most likely setting*, but it won't tell us the possible settings that are compatible with the data.
+
+The Bayesian approach is to let the parameters themselves by random variables. We don't want to optimise. We don't want to find the most likely parameters. We instead want to derive a belief about the parameters as a probability distribution. This is what Bayesians do; they represent belief with probability.
+
+So we can write θ = \[m,c,σ\] as a random variable, and try and infer the distribution over it. We can do this using Bayes' rule.  Writing in the form \(D=data, H=hypothesis; hypothesised parameter settings\):
+
+P\(H\|D\) = P\(D\|H\) P\(H\) / P\(D\)
+
+Assuming our hypotheses H are parameterised by θ, then we want to know P\(θ\|D\) = P\(D\|θ\)P\(θ\) / P\(D\), where D stands for the data \[\(x<sub>1</sub>, y<sub>1</sub>\), \(x<sub>2</sub>, y<sub>2</sub>\), ..., \(x<sub>n</sub>, y<sub>n</sub>\)\]. In linear regression θ can be seen as the hypothesis that the data was generated by a line with parameters specified by θ.
+
+We need:  
+* a **prior** over the parameters P\(θ\). An initial belief about the possible gradient m, offset c and noise level σ, in the linear regression case.
+* a way of calculating the **likelihood** P\(D\|θ\). 
+* a way of combining these using Bayes Rule. In general this is impossible to compute exactly \(in particular the P\(D\) term is often intractable\), but we could sample from it using **Markov Chain Monte Carlo**, for example.
+
+This will give us samples from the posterior distribution of P\(θ\|D\), so we can see how sure we should be about our beliefs about the parameters of the mysterious entity.
+
+*Bayesian regression tries to update a distribution over line parameters given evidence*
 
 
 
